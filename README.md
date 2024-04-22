@@ -9,6 +9,10 @@ The UML Class Diagram represents the high-level design of the application's data
 
 ## Physical Data Model
 
+The Physical Data Model defines the structure of the database tables required for the application. It outlines the relationships between entities and their respective attributes, providing a clear representation of the database schema.
+
+![Physical Data Model](C:\Users\ningo\IdeaProjects\paymybuddy\bdd\uml\PMB_diagramme-de-modele-physique.png)
+
 ```sql
 -- Create User table
 CREATE TABLE Users (
@@ -58,5 +62,3 @@ CREATE TABLE Notification (
     FOREIGN KEY (user_email) REFERENCES Users(email)
 );
 ```
-The Physical Data Model defines the structure of the database tables required for the application. It outlines the relationships between entities and their respective attributes, providing a clear representation of the database schema.
-
