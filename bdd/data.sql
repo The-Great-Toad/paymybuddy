@@ -1,21 +1,3 @@
-# Project Overview
-This project aims to develop a banking application that allows users to manage their finances, make transactions, and interact with their contacts seamlessly.
-
-## UML Class Diagram
-
-The UML Class Diagram represents the high-level design of the application's data model. It illustrates the relationships and attributes of the main entities involved in the system, including User, Account, Transaction, Contact, and Notification.
-
-![UML Class Diagram](C:\Users\ningo\IdeaProjects\OC-projects\OC-paymybuddy\bdd\uml\PMB_diagramme-de-classe.drawio.png)
-
-## Physical Data Model
-
-The Physical Data Model defines the structure of the database tables required for the application. It outlines the relationships between entities and their respective attributes, providing a clear representation of the database schema.
-
-![Physical Data Model](C:\Users\ningo\IdeaProjects\OC-projects\OC-paymybuddy\bdd\uml\PMB_diagramme-de-modele-physique.png)
-
-### Table creation script
-
-```sql
 -- Create User table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -79,4 +61,3 @@ CREATE TABLE notification (
     status VARCHAR(10) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
-```
