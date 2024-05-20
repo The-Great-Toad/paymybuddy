@@ -1,15 +1,28 @@
 package openclassroom.p6.paymybuddy.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @DynamicUpdate
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
+
+    public enum Role { USER, ADMIN }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,20 +32,22 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @Column
     private String firstname;
 
-    @Column
     private String lastname;
 
-    @Column
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
+//    @OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST} )
+//    @JoinColumn(name = "account_id")
     @OneToOne(mappedBy = "user", cascade = { CascadeType.MERGE, CascadeType.PERSIST})
     private Account account;
 
     @ManyToMany(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
@@ -45,36 +60,13 @@ public class User {
     )
     private List<Contact> contacts;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Notification> notifications;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public User addEmail(String email) {
         this.email = email;
         return this;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
     }
 
     public User addFirstname(String firstname) {
@@ -82,25 +74,9 @@ public class User {
         return this;
     }
 
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
     public User addLastname(String lastname) {
         this.lastname = lastname;
         return this;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public User addPassword(String password) {
@@ -108,43 +84,19 @@ public class User {
         return this;
     }
 
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
     public User addAccount(Account account) {
         this.account = account;
         return this;
     }
 
-    public List<Contact> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
-    }
-
     public void addContact(Contact contact) {
         contacts.add(contact);
-        contact.getContactUsers().add(this);
+//        contact.getContactUsers().add(this);
     }
 
     public void removeContact(Contact contact) {
         contacts.remove(contact);
-        contact.getContactUsers().remove(this);
-    }
-
-    public List<Notification> getNotifications() {
-        return notifications;
-    }
-
-    public void setNotifications(List<Notification> notifications) {
-        this.notifications = notifications;
+//        contact.getContactUsers().remove(this);
     }
 
     public void addNotification(Notification notification) {
@@ -156,34 +108,38 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id == user.id && Objects.equals(email, user.email) && Objects.equals(firstname, user.firstname) && Objects.equals(lastname, user.lastname) && Objects.equals(password, user.password)
-                && Objects.equals(account, user.account)
-                && Objects.equals(contacts, user.contacts) && Objects.equals(notifications, user.notifications);
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, email, firstname, lastname, password,
-                account,
-                contacts, notifications);
+    public String getPassword() {
+        return password;
     }
 
     @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("User{");
-        sb.append("id=").append(id);
-        sb.append(", email='").append(email).append('\'' );
-        sb.append(", firstname='").append(firstname).append('\'' );
-        sb.append(", lastname='").append(lastname).append('\'' );
-        sb.append(", password='").append(password).append('\'' );
-        sb.append(", account=").append(account);
-        sb.append(", contacts=").append(contacts);
-        sb.append(", notifications=").append(notifications);
-        sb.append('}' );
-        return sb.toString();
+    public String getUsername() {
+        return email;
     }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
 }
