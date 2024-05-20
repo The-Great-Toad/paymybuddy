@@ -30,7 +30,9 @@ public class ContactService {
     }
 
     public Contact createAndSaveContact(String email) {
-        Contact contact = new Contact().addEmail(email);
+        Contact contact = Contact.builder()
+                .email(email)
+                .build();
         return contactRepository.save(contact);
     }
 }

@@ -11,6 +11,8 @@ import org.assertj.core.util.IterableUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Optional;
 
@@ -18,6 +20,7 @@ import static org.springframework.test.util.AssertionErrors.assertNotNull;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @SpringBootTest
+//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class UserServiceIntegrationTest {
 
     @Autowired
@@ -32,6 +35,7 @@ public class UserServiceIntegrationTest {
     private final String userEmail = "user.test@eamil.com";
     @Test
     @Transactional
+    @Commit
     public void createUserTest() {
 
         User newUser = new User()
@@ -43,9 +47,10 @@ public class UserServiceIntegrationTest {
         newUser = userService.saveUser(newUser);
         assertNotNull("User id is null", newUser.getId());
 
-        Account newAccount = new Account()
-                .addBalance(50000)
-                .addUser(newUser);
+        Account newAccount = Account.builder()
+                .balance(50000)
+                .user(newUser)
+                .build();
 
         newAccount = accountService.saveAccount(newAccount);
         assertNotNull("Account id is null", newAccount.getId());
@@ -59,7 +64,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    @Transactional
+//    @Transactional
     public void deleteUserTest() {
         Optional<User> optionalUser = userService.getUser(userEmail);
         assertNotNull("No user in bdd", optionalUser);
