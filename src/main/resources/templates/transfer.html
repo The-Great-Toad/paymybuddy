@@ -1,0 +1,136 @@
+<!doctype html>
+<html th:replace="~{baseLayout :: layout(~{::title}, ~{::div.container})}">
+<head>
+    <title>Transfer</title>
+</head>
+<body>
+
+<div class="container">
+
+    <!--    ALERTS     -->
+    <div class="alert alert-success alert-dismissible fade show mt-2" role="alert" th:if="${transactionSuccess}">
+        Transaction saved
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!--    TRANSACTIONS FORM     -->
+    <div class="trans-form-container">
+        <!--    FORM HEADER     -->
+        <div class="trans-form-header">
+            <h3>Send Money</h3>
+            <button type="button" class="btn btn-secondary">Add Connection</button>
+        </div>
+        <!--    FORM     -->
+        <div class="trans-form-inner-container">
+            <form action="#" class="row g-2 trans-form" method="post"
+                  th:action="@{/transactions}" th:object="${transactionRequest}">
+                <!--    CONTACTS     -->
+                <div class="col-md-6 col-contacts">
+                    <select class="form-select form-select-sm" th:field="*{receiver}" aria-label="select-contact"
+                            th:classappend="${#fields.hasErrors('receiver')}? 'is-invalid'">
+                        <option value="" disabled selected>Select A Connection</option>
+                        <option th:each="contact : ${contacts}" th:text="${contact.email}" value="${contact.email}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('receiver')}" th:errors="*{receiver}">Receiver Error</div>
+                </div>
+                <!--    AMOUNT     -->
+                <div class="col-md-6 col-amount">
+                    <div class="input-group form-amount">
+                        <span class="input-group-text">$</span>
+                        <input type="number" class="form-control" placeholder="Amount" min="1" aria-label="Amount"
+                               th:field="*{amount}" th:classappend="${#fields.hasErrors('amount')}? 'is-invalid'">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</div>
+                    </div>
+                </div>
+                <!--    DESCRIPTION     -->
+                <div class="col-md-9">
+                    <input type="text" class="form-control form-description" placeholder="Description..." maxlength="255"
+                           th:field="*{description}" th:classappend="${#fields.hasErrors('description')}? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
+                </div>
+                <!--    SUBMIT     -->
+                <div class="col-3">
+                    <button class="btn btn-primary form-btn" type="submit">Pay</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--    TRANSACTIONS     -->
+    <h3>My Transactions</h3>
+    <!--    FILTER FORM    -->
+    <form th:action="@{/transactions}" class="row g-1">
+        <div class="col-auto">
+            <label for="keyword" class="col-form-label">Search:</label>
+        </div>
+        <div class="col-md-6">
+            <input class="form-control" id="keyword" type="search" name="keyword" th:value="${keyword}" placeholder="Enter keyword">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a class="btn btn-danger" th:href="@{/transactions}">Clear</a>
+        </div>
+    </form>
+    <div th:if="${transactions.size() > 0}">
+        <!--    TABLE    -->
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Connections</th>
+                <th scope="col">Description</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Date</th>
+            </tr>
+            </thead>
+            <tbody class="table-striped">
+                <tr th:each="transaction : ${transactions}">
+                    <td th:text="${transaction.id}"></td>
+                    <td th:text="${transaction.description}"></td>
+                    <td th:text="${transaction.amount}"></td>
+                    <td th:text="${{transaction.date}}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!--    PAGINATOR   -->
+        <nav class="row g-1 justify-content-center" aria-label="Page navigation and size">
+            <ul class="col-auto pagination">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging(1, '<<', 'First Page')}"></a>
+                </li>
+                <li class="page-item font-weight-bold" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging(${currentPage - 1}, 'Prev', 'Previous Page')}"></a>
+                </li>
+                <li class="page-item"
+                    th:each="page : ${#numbers.sequence((currentPage > 2 ? currentPage - 2 : 1), (currentPage + 2 < totalPages ? currentPage + 2 : totalPages))}"
+                    th:classappend="${page == currentPage} ? 'active'">
+                    <a th:replace="~{fragments/paging :: paging(${page}, ${page}, 'Page ' + ${page})}"></a>
+                </li>
+                <li class="page-item font-weight-bold" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging(${currentPage + 1},'Next', 'Next Page')}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a th:replace="~{fragments/paging :: paging(${totalPages}, '>>', 'Last Page')}"></a>
+                </li>
+            </ul>
+
+            <div class="col-auto total-items">
+                <div class="input-group">
+                    <label class="input-group-text" for="size">Items per page:</label>
+                    <select class="form-select" id="size" name="size" th:onchange="changePageSize()">
+                        <option class="size-option" th:each="s : ${#numbers.sequence(10,100,20)}" th:value="${s}" th:text="${s}" th:selected="${s == pageSize}"></option>
+                    </select>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div th:if="${transactions.size() == 0 && keyword == null}">
+        <p>You haven't made any transfer yet</p>
+    </div>
+    <div th:if="${transactions.size() == 0 && keyword != null}">
+        <p>Oupsy try again! There is no transaction with a description matching your search...</p>
+    </div>
+</div>
+
+</body>
+</html>
