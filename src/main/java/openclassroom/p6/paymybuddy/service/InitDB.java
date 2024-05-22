@@ -2,7 +2,9 @@ package openclassroom.p6.paymybuddy.service;
 
 import lombok.RequiredArgsConstructor;
 import openclassroom.p6.paymybuddy.domain.Account;
+import openclassroom.p6.paymybuddy.domain.Contact;
 import openclassroom.p6.paymybuddy.domain.Transaction;
+import openclassroom.p6.paymybuddy.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -25,9 +27,15 @@ public class InitDB {
 
     private final AccountService accountService;
     private final TransactionService transactionService;
+    private final ContactService contactService;
+    private final UserService userService;
 
+    public void initTables() {
+        initTransactionTable();
+        initUserContactTable();
+    }
 
-    public void initTransactionTable() {
+    private void initTransactionTable() {
         logger.info("{} - START - Transaction table initialization", LOG_ID);
         List<Transaction> savedTransactions = new ArrayList<>();
 
@@ -69,4 +77,27 @@ public class InitDB {
         logger.info("{} - END - Transaction table initialization", LOG_ID);
     }
 
+    private void initUserContactTable() {
+        logger.info("{} - START - User contact table initialization", LOG_ID);
+
+        Iterable<User> users = userService.getUsers();
+        long userNb = StreamSupport.stream(users.spliterator(), false).count();
+        logger.info("{} - Retrieved {} users from db", LOG_ID, userNb);
+
+        Iterable<Contact> contacts = contactService.getContacts();
+        long contactNb = StreamSupport.stream(contacts.spliterator(), false).count();
+        logger.info("{} - Retrieved {} contacts", LOG_ID, contactNb);
+
+        for (User user : users) {
+            List<Contact> contactList = new ArrayList<>();
+            contacts.forEach(contactList::add);
+            contactList.remove(contactService.getContact(user.getEmail()).get());
+            Collections.shuffle(contactList);
+
+            user.setContacts(contactList.subList(0,5));
+            userService.saveUser(user);
+            user.getContacts().forEach(contact -> logger.info("{} - Adding contact {} to user {}", LOG_ID, contact.getEmail(), user.getEmail()));
+        }
+        logger.info("{} - END - User contact table initialization", LOG_ID);
+    }
 }

@@ -35,7 +35,7 @@ public class TransactionController {
 
 
     @GetMapping()
-    public String transferView(
+    public String transactionView(
             Model model,
             Authentication authentication,
             @RequestParam(required = false) String keyword,
@@ -51,7 +51,6 @@ public class TransactionController {
 
             model.addAttribute("transactions", pageTransactions.getContent());
             model.addAttribute("contacts", contactService.getContacts());
-//            model.addAttribute("transactionSuccess", false);
             model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
             model.addAttribute("keyword", keyword);
             model.addAttribute("currentPage", page);
@@ -62,11 +61,11 @@ public class TransactionController {
             model.addAttribute("exceptionMessage", e.getMessage());
         }
 
-        return "transfer";
+        return "transaction";
     }
 
     @PostMapping
-    public String save(
+    public String transactionSave(
             Model model,
             Authentication authentication,
             @Valid TransactionRequest transactionRequest,
@@ -75,32 +74,38 @@ public class TransactionController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size)
     {
-        logger.info("{} - transaction request: {}", LOG_ID, transactionRequest);
-        if (bindingResult.hasErrors()) {
-            return "transfer";
-        }
-
-        Transaction transaction = transactionService.saveTransactionRequest(authentication, transactionRequest);
-        if (Objects.nonNull(transaction.getId())) {
-            model.addAttribute("transactionSuccess", true);
-        }
+        model.addAttribute("contacts", contactService.getContacts());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
 
         try {
             Pageable paging = PageRequest.of(page - 1, size, Sort.by("date").descending());
-            Page<Transaction> pageTransactions = transactionService.getTransactions(keyword, paging);
+            Page<Transaction> pageTransactions;
 
-            model.addAttribute("transactions", pageTransactions.getContent());
-            model.addAttribute("contacts", contactService.getContacts());
-            model.addAttribute("keyword", keyword);
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalItems", pageTransactions.getTotalElements());
-            model.addAttribute("totalPages", pageTransactions.getTotalPages());
-            model.addAttribute("pageSize", size);
-            model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
+            logger.info("{} - transaction request: {}", LOG_ID, transactionRequest);
+
+            if (bindingResult.hasErrors()) {
+                pageTransactions = transactionService.getTransactions(keyword, paging);
+                model.addAttribute("transactions", pageTransactions.getContent());
+                model.addAttribute("totalItems", pageTransactions.getTotalElements());
+                model.addAttribute("totalPages", pageTransactions.getTotalPages());
+                return "transaction";
+            }
+
+            Transaction transaction = transactionService.saveTransactionRequest(authentication, transactionRequest);
+            if (Objects.nonNull(transaction.getId())) {
+                pageTransactions = transactionService.getTransactions(keyword, paging);
+                model.addAttribute("transactions", pageTransactions.getContent());
+                model.addAttribute("totalItems", pageTransactions.getTotalElements());
+                model.addAttribute("totalPages", pageTransactions.getTotalPages());
+                model.addAttribute("transactionSuccess", true);
+                model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
+            }
         }  catch (Exception e) {
             model.addAttribute("exceptionMessage", e.getMessage());
         }
 
-        return "transfer";
+        return "transaction";
     }
 }

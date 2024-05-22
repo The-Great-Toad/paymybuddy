@@ -23,15 +23,15 @@ public class Account {
     @Column
     private Integer id;
 
-    @OneToOne(
-            fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.MERGE,
-                    CascadeType.PERSIST
-            }
-    )
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @OneToOne(
+//            fetch = FetchType.LAZY
+//            cascade = {
+//                    CascadeType.MERGE,
+//                    CascadeType.PERSIST
+//            }
+//    )
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     private double balance;
 
@@ -61,15 +61,4 @@ public class Account {
         transactions.remove(transaction);
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Account{");
-        sb.append("id=").append(id);
-        sb.append(", user_id=").append(user.getId());
-        sb.append(", balance=").append(balance);
-        sb.append(", available_balance=").append(available_balance);
-        sb.append(", pending_balance=").append(pending_balance);
-        sb.append('}');
-        return sb.toString();
-    }
 }

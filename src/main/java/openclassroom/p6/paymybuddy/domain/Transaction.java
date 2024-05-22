@@ -23,6 +23,10 @@ public class Transaction {
     @Column
     private Integer id;
 
+    private Integer sender_id;
+
+    private Integer receiver_id;
+
     private String description;
 
     private double amount;

@@ -6,7 +6,57 @@
 <body>
 
 <div class="container">
-    <h1>Contact page</h1>
+
+    <!--    ALERTS     -->
+    <div class="alert alert-success alert-dismissible fade show mt-2" role="alert" th:if="${contactSuccess}">
+        Contact added
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <h3>Add a contact</h3>
+    <!-- CONTACT FORM -->
+    <form action="#" method="post" class="row g-1 contact-form"
+          th:action="@{/contacts}" th:object="${contactRequest}">
+        <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Enter email..." aria-label="contact email"
+                   th:field="*{email}" th:classappend="${#fields.hasErrors('email') || contactUnknown}? 'is-invalid'">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
+            <div class="invalid-feedback" th:if="${contactUnknown}">Contact not found...</div>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary form-btn">Add</button>
+        </div>
+    </form>
+
+    <h3>Contacts</h3>
+    <!-- FILTER -->
+    <form action="#" class="row g-1 contact-filter">
+        <div class="col-auto">
+            <label for="keyword" class="col-form-label">Search:</label>
+        </div>
+        <div class="col-auto">
+            <input type="text" class="form-control" id="keyword">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a th:href="@{/contacts}" class="btn btn-danger">Clear</a>
+        </div>
+    </form>
+    <!-- TABLE -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Email</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr th:each="contact : ${contacts}">
+            <td th:text="${contact.email}">email</td>
+            <td><a th:href="@{/contacts/remove-contact(email=${contact.email})}" class="btn btn-danger">Delete</a></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 </body>
