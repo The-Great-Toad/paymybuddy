@@ -1,17 +1,11 @@
 <!doctype html>
-<html th:replace="~{baseLayout :: layout(~{::title}, ~{::div.container})}">
+<html th:replace="~{baseLayout :: layout(~{::title}, _, _,  ~{::div.container})}">
 <head>
     <title>Contact</title>
 </head>
 <body>
 
 <div class="container">
-
-    <!--    ALERTS     -->
-    <div class="alert alert-success alert-dismissible fade show mt-2" role="alert" th:if="${contactSuccess}">
-        Contact added
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
 
     <h3>Add a contact</h3>
     <!-- CONTACT FORM -->

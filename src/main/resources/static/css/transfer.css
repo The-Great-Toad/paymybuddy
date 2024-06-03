@@ -1,0 +1,32 @@
+.trans-form-header {
+    display: flex;
+    justify-content: space-between;
+}
+.trans-form-inner-container {
+    height: 20vh;
+    background-color: lightgray;
+}
+.trans-form {
+    width: 70%;
+    margin: auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.form-select {
+    height: 2.3rem;
+    width: 90%;
+}
+.col-amount {
+    display: flex;
+    justify-content: end;
+}
+.form-amount {
+    width: 90%;
+}
+.form-description {
+    width: 95%;
+}
+.form-btn {
+    width: 100%;
+}

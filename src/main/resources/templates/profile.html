@@ -1,13 +1,147 @@
 <!doctype html>
-<html th:replace="~{baseLayout :: layout(~{::title}, ~{::div.container})}">
+<html th:replace="~{baseLayout :: layout(~{::title}, ~{::link}, ~{::script},  ~{::section})}">
 <head>
     <title>Profile</title>
+
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/profile.css}">
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/password-policy.css}">
+
+    <script th:src="@{/js/password-policy.js}" defer></script>
+    <script th:src="@{/js/profile.js}" defer></script>
 </head>
 <body>
 
-<div class="container">
-    <h1>Profile page</h1>
-</div>
+<section class="container">
+
+    <h3>My Information</h3>
+    <div class="my-card">
+        <div class="card-image">
+            <div class="image">
+                <i class="fa-solid fa-user-large"></i>
+            </div>
+        </div>
+        <div class="card-content col-md-6">
+            <!-- EMAIL -->
+            <div class="email">
+                <label for="email" class="col-form-label">Email:</label>
+                <input type="text" id="email" class="form-control" aria-label="Disabled input example" disabled
+                       th:value="${user.email}">
+            </div>
+            <form action="#" method="post" id="user-info-form" th:action="@{/profile/info}" th:object="${userInfoRequest}">
+                <!-- LASTNAME -->
+                <div class="item">
+                    <label for="lastname" class="col-form-label">Lastname:</label>
+                    <input type="text" id="lastname" class="form-control"
+                           th:field="*{lastname}" th:value="*{lastname}" th:classappend="${#fields.hasErrors('lastname')}? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}">lastname Error</div>
+                </div>
+                <!-- FIRSTNAME -->
+                <div class="item">
+                    <label for="firstname" class="col-form-label">Firstname:</label>
+                    <input type="text" id="firstname" class="form-control"
+                           th:field="*{firstname}" th:value="*{firstname}" th:classappend="${#fields.hasErrors('firstname')}? 'is-invalid'">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}">firstname Error</div>
+                </div>
+            </form>
+        </div>
+        <!-- SUBMIT -->
+        <div class="card-footer">
+            <div class="form-btn btn-user-info">
+                <button type="submit" class="btn btn-primary" onclick="submitUserInfo()">Update Info</button>
+            </div>
+        </div>
+    </div>
+
+    <h3>Change my password</h3>
+    <div class="pwd-card">
+        <div class="card-image">
+            <div class="image">
+                <i class="fa-solid fa-key"></i>
+            </div>
+        </div>
+        <div class="password-policy" th:replace="~{/fragments/password-policy}"></div>
+        <div class="card-content col-md-6">
+            <form action="#" method="post" id="user-pwd-form" th:action="@{/profile/password}" th:object="${userPasswordRequest}">
+                <!-- OLD-PASSWORD -->
+                <div class="item">
+                    <label for="old-password" class="col-form-label">Old password:</label>
+                    <div class="pwd-field">
+                        <input type="password" id="old-password" class="form-control"
+                               th:field="*{oldPassword}" th:value="*{oldPassword}" th:classappend="${#fields.hasErrors('oldPassword')}? 'is-invalid'">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('oldPassword')}" th:errors="*{oldPassword}">oldPassword Error</div>
+                        <i class="fa-solid fa-eye old-pwd"></i>
+                    </div>
+
+                </div>
+                <!-- NEW PASSWORD -->
+                <div class="item">
+                    <label for="new-password" class="col-form-label">New password:</label>
+                    <div class="pwd-field">
+                        <input type="password" id="new-password" class="form-control"
+                               th:field="*{newPassword}" th:value="*{newPassword}" th:classappend="${#fields.hasErrors('newPassword')}? 'is-invalid'">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}">newPassword Error</div>
+                        <i class="fa-solid fa-eye new-pwd"></i>
+                    </div>
+                </div>
+                <!-- CONFIRM PASSWORD -->
+                <div class="item">
+                    <label for="confirm-pwd" class="col-form-label">Confirm password:</label>
+                    <div class="pwd-field">
+                        <input type="password" id="confirm-pwd" class="form-control"
+                               th:field="*{confirmPassword}" th:value="*{confirmPassword}" th:classappend="${#fields.hasErrors('confirmPassword')}? 'is-invalid'">
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">confirmPassword Error</div>
+                        <i class="fa-solid fa-eye confirm-pwd"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- SUBMIT -->
+        <div class="card-footer">
+            <div class="form-btn btn-user-pwd">
+                <button type="submit" class="btn btn-primary" onclick="submitUserPwd()">Change Password</button>
+            </div>
+        </div>
+    </div>
+
+    <h3>My Account</h3>
+    <div class="my-card">
+        <div class="card-image">
+            <div class="image">
+                <i class="fa-solid fa-vault"></i>
+            </div>
+        </div>
+        <div class="card-content col-md-6">
+            <!-- CONFIRM PASSWORD -->
+            <div class="item">
+                <label for="balance" class="col-form-label">Your account balance:</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="text" id="balance" class="form-control" th:value="*{user.account.available_balance}" disabled>
+                </div>
+            </div>
+            <!-- Deposit / Withdraw -->
+            <form action="#" method="post" id="deposit-withdraw-form" th:object="${amountRequest}">
+                <div class="input-group form-amount">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="amount" min="10" step="0.01"  aria-label="Amount"
+                           th:field="*{amount}" th:classappend="${#fields.hasErrors('amount')}? 'is-invalid'" th:placeholder="'minimum amount of 10.00€'">
+<!--                    <div class="form-text" id="basic-addon4">Available balance: <span class="available_balance" th:text="'$'+${user.account.available_balance}"></span></div>-->
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</div>
+                </div>
+            </form>
+        </div>
+        <!-- SUBMIT -->
+        <div class="card-footer">
+            <div class="form-btn btn-deposit">
+                <button type="submit" id="deposit" class="btn btn-primary" onclick="submitDeposit()">Make Deposit</button>
+            </div>
+            <div class="form-btn btn-withdraw">
+                <button type="submit" id="withdraw" class="btn btn-warning" onclick="submitWithdraw()">Make Withdrawal</button>
+            </div>
+        </div>
+    </div>
+
+</section>
 
 </body>
 </html>

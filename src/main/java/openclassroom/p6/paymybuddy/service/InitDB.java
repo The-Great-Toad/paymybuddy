@@ -96,7 +96,7 @@ public class InitDB {
 
             user.setContacts(contactList.subList(0,5));
             userService.saveUser(user);
-            user.getContacts().forEach(contact -> logger.info("{} - Adding contact {} to user {}", LOG_ID, contact.getEmail(), user.getEmail()));
+//            user.getContacts().forEach(contact -> logger.info("{} - Adding contact {} to user {}", LOG_ID, contact.getEmail(), user.getEmail()));
         }
         logger.info("{} - END - User contact table initialization", LOG_ID);
     }

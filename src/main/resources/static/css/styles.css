@@ -1,6 +1,14 @@
-main {
-    margin-bottom: 5rem;
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
+
+main {
+    flex-grow: 1;
+}
+
 footer {
     width: 100%;
     background-color: black;
@@ -8,9 +16,7 @@ footer {
     font-size: 0.75rem;
     text-align: center;
     padding: 10px;
-    position: fixed;
-    bottom:0;
-    z-index: 3;
+    align-self: flex-end;
 }
 
 #navbarNav {
@@ -19,41 +25,4 @@ footer {
 
 .container {
     max-width: 1200px;
-}
-
-.trans-form-container {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-}
-.trans-form-header {
-    display: flex;
-    justify-content: space-between;
-}
-.trans-form-inner-container {
-    height: 20vh;
-    background-color: lightgray;
-}
-.trans-form {
-    width: 70%;
-    margin: auto;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-}
-.form-select {
-    height: 2.3rem;
-    width: 90%;
-}
-.col-amount {
-    display: flex;
-    justify-content: end;
-}
-.form-amount {
-    width: 90%;
-}
-.form-description {
-    width: 95%;
-}
-.form-btn {
-    width: 100%;
 }

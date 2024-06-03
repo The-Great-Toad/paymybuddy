@@ -1,17 +1,13 @@
 <!doctype html>
-<html th:replace="~{baseLayout :: layout(~{::title}, ~{::div.container})}">
+<html th:replace="~{baseLayout :: layout(~{::title}, ~{::link}, ~{::script}, ~{::section})}">
 <head>
     <title>Transfer</title>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/transfer.css}">
+    <script th:src="@{/js/transaction.js}" defer></script>
 </head>
 <body>
 
-<div class="container">
-
-    <!--    ALERTS     -->
-    <div class="alert alert-success alert-dismissible fade show mt-2" role="alert" th:if="${transactionSuccess}">
-        Transaction saved
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+<section class="container">
 
     <!--    TRANSACTIONS FORM     -->
     <div class="trans-form-container">
@@ -135,7 +131,7 @@
         </div>
     </div>
 
-</div>
+</section>
 
 </body>
 </html>

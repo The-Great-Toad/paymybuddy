@@ -17,4 +17,9 @@ public interface ContactRepository extends JpaRepository<Contact, Integer> {
     Optional<Contact> findByEmail(String email);
 
     void deleteContactByEmail(String email);
+
+    @Query(value = "", nativeQuery = true)
+    void deleteUserContactByEmail(String email);
+    //todo faire une custom query pour ajouter/enlever un contact à un user
+
 }
