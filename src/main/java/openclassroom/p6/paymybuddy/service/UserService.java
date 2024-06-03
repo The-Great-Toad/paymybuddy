@@ -3,10 +3,12 @@ package openclassroom.p6.paymybuddy.service;
 import lombok.RequiredArgsConstructor;
 import openclassroom.p6.paymybuddy.constante.Messages;
 import openclassroom.p6.paymybuddy.constante.Regex;
+import openclassroom.p6.paymybuddy.domain.Account;
 import openclassroom.p6.paymybuddy.domain.Contact;
 import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.UserInfoRequest;
 import openclassroom.p6.paymybuddy.domain.record.UserPasswordRequest;
+import openclassroom.p6.paymybuddy.domain.record.UserRequest;
 import openclassroom.p6.paymybuddy.repository.UserRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -146,5 +148,37 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(userPwdRequest.newPassword()));
         userRepository.save(user);
         logger.info("{} - User password updated", LOG_ID);
+    }
+
+    public User registerNewUser(UserRequest userRequest) {
+        if (emailExits(userRequest.email())) {
+            return null;
+        }
+
+        int lastAccountId = 10;
+        Account newAccount = accountService.saveAccount(Account.builder()
+                .id(++lastAccountId)
+                .available_balance(5000)
+                .build());
+        logger.info("{} - New user account created: {}", LOG_ID, newAccount.getId());
+
+        Contact registeredUserAsContact = contactService.saveContact(userRequest.email());
+        logger.info("{} - Contact created: {}", LOG_ID, registeredUserAsContact.getEmail());
+
+        User registeredUser = userRepository.save(User.builder()
+                .lastname(userRequest.lastname())
+                .firstname(userRequest.firstname())
+                .email(userRequest.email())
+                .password(passwordEncoder.encode(userRequest.password()))
+                .account(newAccount)
+                .role(User.Role.USER)
+                .build());
+        logger.info("{} - user registered: {}", LOG_ID, registeredUser.getEmail());
+
+        return registeredUser;
+    }
+
+    private boolean emailExits(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 }

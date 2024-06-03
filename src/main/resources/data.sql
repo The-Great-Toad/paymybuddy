@@ -1,19 +1,19 @@
-INSERT INTO account(available_balance, balance, id, pending_balance)
+INSERT INTO account(available_balance, balance, pending_balance)
 VALUES
-    (5000, 5000, 1, 5000),
-    (5000, 5000, 2, 5000),
-    (5000, 5000, 3, 5000),
-    (5000, 5000, 4, 5000),
-    (5000, 5000, 5, 5000),
-    (5000, 5000, 6, 5000),
-    (5000, 5000, 7, 5000),
-    (5000, 5000, 8, 5000),
-    (5000, 5000, 9, 5000),
-    (5000, 5000, 10, 5000);
+    (5000, 5000, 5000),
+    (5000, 5000, 5000),
+    (5000, 5000, 5000),
+    (5000, 5000, 5000),
+    (5000, 5000, 5000),
+    (5000, 5000, 5000),
+    (5000, 5000, 5000),
+    (5000, 5000, 5000),
+    (5000, 5000, 5000),
+    (5000, 5000, 5000);
 
 INSERT INTO users(email, firstname, lastname, password, role, account_id)
 VALUES
-    ('test', 'test', 'test', '$2a$10$bFfnHsj1di5AeMftBY4upu88zLZ43PPeSNKE5.n.N.aaNNv9hNIw.', 'USER', 1),
+    ('test@test.com', 'test', 'test', '$2a$10$bFfnHsj1di5AeMftBY4upu88zLZ43PPeSNKE5.n.N.aaNNv9hNIw.', 'USER', 1),
     ('clara@mail.com', 'Clara', 'Kent', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 2),
     ('patrick@mail.com', 'Patrick', 'Dupond', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 3),
     ('david@mail.com', 'David', 'Todd', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 4),
@@ -26,7 +26,7 @@ VALUES
 
 INSERT INTO contact(email)
 VALUES
-    ('test'),
+    ('test@test.com'),
     ('clara@mail.com'),
     ('patrick@mail.com'),
     ('david@mail.com'),

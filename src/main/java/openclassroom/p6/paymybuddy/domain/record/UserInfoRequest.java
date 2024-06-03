@@ -7,11 +7,11 @@ import openclassroom.p6.paymybuddy.constante.Regex;
 
 public record UserInfoRequest(
 
-        @NotBlank(message = Messages.NOT_NULL)
+        @NotBlank(message = Messages.REQUIRED)
         @Pattern(regexp = Regex.NAME, message = Messages.ALPHA_CHAR_ONLY)
         String lastname,
 
-        @NotBlank(message = Messages.NOT_NULL)
+        @NotBlank(message = Messages.REQUIRED)
         @Pattern(regexp = Regex.NAME, message = Messages.ALPHA_CHAR_ONLY)
         String firstname
 ) {}

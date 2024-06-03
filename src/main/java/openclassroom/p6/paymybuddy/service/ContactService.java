@@ -38,4 +38,12 @@ public class ContactService {
         Optional<Contact> optionalContact = contactRepository.findByEmail(contactRequest.email());
         return optionalContact.orElse(null);
     }
+
+    public Contact saveContact(String email) {
+        Contact newContact = Contact.builder()
+                .email(email)
+                .build();
+
+        return contactRepository.save(newContact);
+    }
 }
