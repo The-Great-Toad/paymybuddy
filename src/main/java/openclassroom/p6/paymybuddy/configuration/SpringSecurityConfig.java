@@ -33,7 +33,7 @@ public class SpringSecurityConfig {
                 .formLogin(login -> login
                         .loginPage("/login")
                         .permitAll()
-                        .defaultSuccessUrl("/home"))
+                        .defaultSuccessUrl("/home", true))
 //                .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")))
                 .build();
     }

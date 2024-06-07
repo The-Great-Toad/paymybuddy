@@ -39,7 +39,6 @@ public class UserService {
     private final AccountService accountService;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//    private final PasswordEncoder passwordEncoder; //todo: why can't autowired ???
 
     public Iterable<User> getUsers() {
         return userRepository.findAll();
@@ -51,7 +50,6 @@ public class UserService {
 
     public User saveUser(User user) {
         return userRepository.save(user);
-        // TODO: 02/05/2024 implements contact saving during successful user's registration
     }
 
     public void deleteUser(User user) {
@@ -152,6 +150,7 @@ public class UserService {
 
     public User registerNewUser(UserRequest userRequest) {
         if (emailExits(userRequest.email())) {
+            logger.info("{} - User with email {} already exists", LOG_ID, userRequest.email());
             return null;
         }
 
@@ -160,7 +159,7 @@ public class UserService {
                 .id(++lastAccountId)
                 .available_balance(5000)
                 .build());
-        logger.info("{} - New user account created: {}", LOG_ID, newAccount.getId());
+        logger.info("{} - New account created: {}", LOG_ID, newAccount.getId());
 
         Contact registeredUserAsContact = contactService.saveContact(userRequest.email());
         logger.info("{} - Contact created: {}", LOG_ID, registeredUserAsContact.getEmail());

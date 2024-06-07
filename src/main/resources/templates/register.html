@@ -20,61 +20,55 @@
 
     <div class="outer-wrapper">
         <div class="inner-wrapper">
-            <!--    ALERTS     -->
-            <div>
-                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert" th:if="${param.logout}">
-                    You have been logged out.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert" th:if="${param.error}">
-                    Invalid username and password.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            </div>
-
             <!-- Registration Form -->
-            <form class="card" method="post" th:action="@{/register/save}" th:object="${userRequest}">
+            <form action="#" class="card" method="post"
+                  th:action="@{/register/save}" th:object="${userRequest}">
+                <!-- HEADER -->
                 <div class="item header">
                     <button type="button" class="btn my-btn header">Pay My Buddy - Registration</button>
                 </div>
+                <!-- FORM -->
                 <div class="item">
+                    <!-- LASTNAME -->
                     <div class="input-wrapper">
-<!--                        <i class="fa-regular fa-envelope icon lastname"></i>-->
                         <input type="text" class="form-control" id="lastname" name="lastname" placeholder="lastname"
-                        th:field="*{lastname}" th:appendclass="${#fields.hasErrors('lastname')}? 'is-invalid'">
+                               aria-label="lastname" autofocus
+                               th:field="*{lastname}" th:classappend="${#fields.hasErrors('lastname')}? 'is-invalid'">
                         <label for="lastname" hidden="">Lastname</label>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}">Lastname Error</div>
                     </div>
+                    <!-- FIRSTNAME -->
                     <div class="input-wrapper">
-<!--                        <i class="fa-regular fa-envelope icon firstname"></i>-->
-                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Firstname"
-                               th:field="*{firstname}" th:appendclass="${#fields.hasErrors('firstname')}? 'is-invalid'">
+                        <input type="text" class="form-control" id="firstname" name="firstname" placeholder="Firstname" aria-label="firstname"
+                               th:field="*{firstname}" th:classappend="${#fields.hasErrors('firstname')}? 'is-invalid'">
                         <label for="firstname" hidden="">Firstname</label>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}">Firstname Error</div>
                     </div>
+                    <!-- EMAIL -->
                     <div class="input-wrapper">
-<!--                        <i class="fa-regular fa-envelope icon email"></i>-->
-                        <input type="email" class="form-control" id="email" name="username" placeholder="Email"
-                               th:field="*{email}" th:appendclass="${#fields.hasErrors('email')}? 'is-invalid'">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Email" aria-label="email"
+                               th:field="*{email}" th:classappend="${#fields.hasErrors('email') || emailUsed != null}? 'is-invalid'">
                         <label for="email" hidden="">Email address</label>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
+                        <div class="invalid-feedback" th:if="${emailUsed != null}" th:text="${emailUsed}">Email Used Error</div>
                     </div>
                     <hr>
+                    <!-- PASSWORD POLICY -->
                     <div class="password-policy" th:replace="~{/fragments/password-policy}"></div>
+                    <!-- PASSWORD -->
                     <div class="input-wrapper pwd-field">
-<!--                        <i class="fa-solid fa-asterisk icon"></i>-->
-                        <input type="password" class="form-control" id="new-password" name="password" placeholder="Password"
-                               th:field="*{password}" th:appendclass="${#fields.hasErrors('password')}? 'is-invalid'">
+                        <input type="password" class="form-control" id="new-password" name="password" placeholder="Password" aria-label="password"
+                               th:field="*{password}" th:classappend="${#fields.hasErrors('password')}? 'is-invalid'">
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
                         <i class="fa-solid fa-eye" id="icon-new-pwd"></i>
                         <label for="new-password" hidden >Password</label>
                     </div>
                 </div>
+                <!-- SUBMIT -->
                 <div class="item footer">
                     <button type="submit" class="btn btn-primary footer">Register</button>
                 </div>
             </form>
-
             <!-- Login link -->
             <div class="login">
                 <p>Have an account? <a class="login-link" th:href="@{/login}">Sign in</a></p>

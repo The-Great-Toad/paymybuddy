@@ -80,7 +80,7 @@ public class LoginController {
         User registered = userService.registerNewUser(userRequest);
 
         if (Objects.isNull(registered)) {
-            model.addAttribute("emailError", Messages.EMAIL_ALREADY_USED);
+            model.addAttribute("emailUsed", Messages.EMAIL_ALREADY_USED);
             return "register";
         }
 
