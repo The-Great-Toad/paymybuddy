@@ -41,17 +41,7 @@ public class AccountController {
 
         bindingResult = accountService.validateWithdrawal(user.getAccount(), withdrawal.amount(), bindingResult);
 
-        if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(error -> logger.error("{} - {}", LOG_ID, error));
-            UserInfoRequest userInfoRequest = new UserInfoRequest(user.getLastname(), user.getFirstname());
-            UserPasswordRequest userPasswordRequest = new UserPasswordRequest("","","");
-
-            model.addAttribute("user", user);
-            model.addAttribute("userInfoRequest", userInfoRequest);
-            model.addAttribute("userPasswordRequest", userPasswordRequest);
-
-            return "profile";
-        }
+        if (bindingResultHasErrors(model, bindingResult, user)) return "profile";
 
         accountService.withdraw(user.getAccount(), withdrawal.amount());
         redirectAttributes.addFlashAttribute("success", Messages.WITHDRAW_SUCCESS);
@@ -70,6 +60,15 @@ public class AccountController {
         logger.info("{} - deposit amountRequest: {}", LOG_ID, deposit);
         User user = (User) authentication.getPrincipal();
 
+        if (bindingResultHasErrors(model, bindingResult, user)) return "profile";
+
+        accountService.deposit(user.getAccount(), deposit.amount());
+        redirectAttributes.addFlashAttribute("success", Messages.DEPOSIT_SUCCESS);
+
+        return "redirect:/profile";
+    }
+
+    private boolean bindingResultHasErrors(Model model, BindingResult bindingResult, User user) {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(error -> logger.error("{} - {}", LOG_ID, error));
             UserInfoRequest userInfoRequest = new UserInfoRequest(user.getLastname(), user.getFirstname());
@@ -79,12 +78,8 @@ public class AccountController {
             model.addAttribute("userInfoRequest", userInfoRequest);
             model.addAttribute("userPasswordRequest", userPasswordRequest);
 
-            return "profile";
+            return true;
         }
-
-        accountService.deposit(user.getAccount(), deposit.amount());
-        redirectAttributes.addFlashAttribute("success", Messages.DEPOSIT_SUCCESS);
-
-        return "redirect:/profile";
+        return false;
     }
 }

@@ -23,9 +23,9 @@ public class Transaction {
     @Column
     private Integer id;
 
-    private Integer sender_id;
+    private Integer senderId;
 
-    private Integer receiver_id;
+    private Integer receiverId;
 
     private String description;
 

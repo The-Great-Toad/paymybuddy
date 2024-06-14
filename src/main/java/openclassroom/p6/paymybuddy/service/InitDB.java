@@ -40,14 +40,24 @@ public class InitDB {
         List<Transaction> savedTransactions = new ArrayList<>();
 
         logger.info("{} - Transaction creation start...", LOG_ID);
+        int senderAccountId = 1;
         for (int i = 0; i < 200; i++) {
-            int randomDayNb = new Random().nextInt(100);
-            int randomHourNb = new Random().nextInt(23);
+
+            int receiverAccountId;
+            if (i == 20 || i == 40 || i == 60 || i == 80 || i == 100 || i == 120 || i == 140 || i == 160 || i == 180) ++senderAccountId;
+            do {
+                receiverAccountId = new Random().nextInt(10) + 1;
+            } while (receiverAccountId == senderAccountId);
+
+            int randomDayNb = new Random().nextInt(100) + 1;
+            int randomHourNb = new Random().nextInt(22) + 1;
             int randomDescriptionIndex = new Random().nextInt(descriptionList.size() - 1);
-            double amount = amountList.get(new Random().nextInt(amountList.size() - 1)) * new Random().nextInt(20);
             String description = descriptionList.get(randomDescriptionIndex);
+            double amount = amountList.get(new Random().nextInt(amountList.size() - 1)) * (new Random().nextInt(20)+1);
 
             Transaction transaction = Transaction.builder()
+                    .senderId(senderAccountId)
+                    .receiverId(receiverAccountId)
                     .amount(Math.floor(amount * 100) / 100)
                     .description(description)
                     .fee(Math.floor((amount * 0.05) * 100) / 100)
@@ -55,7 +65,9 @@ public class InitDB {
                             Instant.now().minus(randomDayNb, ChronoUnit.DAYS).minus(randomHourNb, ChronoUnit.HOURS),
                             ZoneOffset.UTC)
                     ).build();
+
             transaction = transactionService.saveTransaction(transaction);
+
             if (transaction.getId() != null) savedTransactions.add(transaction);
         }
         logger.info("{} - Created & saved {} transactions", LOG_ID, savedTransactions.size());

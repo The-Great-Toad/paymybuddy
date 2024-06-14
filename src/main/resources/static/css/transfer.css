@@ -1,17 +1,17 @@
+@import "styles.css";
+
 .trans-form-header {
     display: flex;
     justify-content: space-between;
 }
-.trans-form-inner-container {
-    height: 20vh;
-    background-color: lightgray;
-}
+
 .trans-form {
-    width: 70%;
-    margin: auto;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+    width: 100%;
+    height: fit-content;
+    padding: 2rem;
+    margin-top: 0.5rem;
+    background-color: var(--var-col-bg);
+    border: 1px solid var(--var-col-border);
 }
 .form-select {
     height: 2.3rem;
@@ -29,4 +29,40 @@
 }
 .form-btn {
     width: 100%;
+}
+
+.table-filter {
+    background-color: var(--var-col-bg);
+    border: 1px solid var(--var-col-border);
+    padding: 1rem 0.5rem;
+}
+.search {
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.trans-table-container, .trans-h3 {
+    margin-top: 2rem;
+}
+.thead {
+    background-color: var(--var-col-primary) !important;
+}
+tr.thead th {
+    height: 4rem;
+    padding-bottom: 1.5rem;
+    background-color: inherit;
+    color: #ffffff;
+}
+thead, tbody {
+    text-align: center;
+}
+.limit-width {
+    width: 10rem;
+}
+.debit {
+    color: var(--var-col-debit) !important;
+}
+.credit {
+    font-weight: 400;
+    color: var(--var-col-primary) !important;
 }

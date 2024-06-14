@@ -17,8 +17,7 @@
             <a th:href="@{/contacts}" class="btn btn-secondary">Add Connection</a>
         </div>
         <!--    FORM     -->
-        <div class="trans-form-inner-container">
-            <form action="#" class="row g-2 trans-form" method="post"
+        <form action="#" class="row g-2 trans-form" method="post"
                   th:action="@{/transactions}" th:object="${transactionRequest}">
                 <!--    CONTACTS     -->
                 <div class="col-md-6 col-contacts">
@@ -49,15 +48,14 @@
                     <button class="btn btn-primary form-btn" type="submit">Pay</button>
                 </div>
             </form>
-        </div>
     </div>
 
     <!--    TRANSACTIONS     -->
-    <h3>My Transactions</h3>
+    <h3 class="trans-h3">My Transactions</h3>
     <!--    FILTER FORM    -->
-    <form th:action="@{/transactions}" class="row g-1">
+    <form th:action="@{/transactions}" class="row g-1 mt-2 table-filter">
         <div class="col-auto">
-            <label for="keyword" class="col-form-label">Search:</label>
+            <label for="keyword" class="col-form-label search">Search by description:</label>
         </div>
         <div class="col-md-6">
             <input class="form-control" id="keyword" type="search" name="keyword" th:value="${keyword}" placeholder="Enter keyword">
@@ -68,22 +66,24 @@
         </div>
     </form>
     <!-- TABLE & PAGINATOR -->
-    <div th:if="${transactions.size() > 0}">
+    <div class="trans-table-container" th:if="${!#lists.isEmpty(transactions)}">
         <!--    TABLE    -->
         <table class="table table-striped">
             <thead>
-            <tr>
-                <th scope="col">Connections</th>
-                <th scope="col">Description</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Date</th>
-            </tr>
+                <tr class="thead">
+                    <th scope="col" class="limit-width">Connections</th>
+                    <th scope="col">Description</th>
+                    <th scope="col" class="limit-width">Amount</th>
+                    <th scope="col">Date</th>
+                </tr>
             </thead>
             <tbody>
                 <tr th:each="transaction : ${transactions}">
                     <td th:text="${transaction.id}"></td>
                     <td th:text="${transaction.description}"></td>
-                    <td th:text="${transaction.amount}"></td>
+                    <td class="td-amount" th:classappend="${transaction.senderId != user.account.id}? 'credit'"
+                        th:text="${transaction.senderId == user.account.id ? '- ' + #numbers.formatDecimal(transaction.amount, 0, 2)
+                        : '&nbsp&nbsp' + #numbers.formatDecimal(transaction.amount, 0, 2)}+'€'"></td>
                     <td th:text="${{transaction.date}}"></td>
                 </tr>
             </tbody>

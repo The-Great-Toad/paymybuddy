@@ -2,6 +2,7 @@ package openclassroom.p6.paymybuddy.service;
 
 import lombok.RequiredArgsConstructor;
 import openclassroom.p6.paymybuddy.domain.Transaction;
+import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.TransactionRequest;
 import openclassroom.p6.paymybuddy.repository.TransactionRepository;
 import org.slf4j.Logger;
@@ -25,12 +26,26 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
 
-    public Page<Transaction> getTransactions(String keyword, Pageable p) {
+    public Page<Transaction> getTransactions(String keyword, Pageable p, User user) {
+        int accountId = user.getAccount().getId();
+        Page<Transaction> transactions;
+
         if (keyword == null) {
-            return transactionRepository.findAll(p);
+            logger.info("{} - Retrieving transactions for {}, no keyword", LOG_ID, user.getEmail());
+            transactions = transactionRepository.findAllByReceiverIdOrSenderIdOrderByDateDesc(
+                    accountId,
+                    accountId,
+                    p);
         } else {
-            return transactionRepository.findByDescriptionIsContainingIgnoreCaseOrderByDateDesc(keyword, p);
+            logger.info("{} - Retrieving transactions for {}, with keyword {}", LOG_ID, user.getEmail(), keyword);
+            transactions = transactionRepository.findAllByReceiverIdOrSenderIdAndDescriptionIsContainingIgnoreCaseOrderByDateDesc(
+                    accountId,
+                    accountId,
+                    keyword,
+                    p);
         }
+        logger.info("{} - Retrieved {} transactions at page {}", LOG_ID, transactions.getContent().size(), transactions.getNumber());
+        return transactions;
     }
 
     public Optional<Transaction> getTransaction(Integer id) {
@@ -38,11 +53,11 @@ public class TransactionService {
     }
 
     public Transaction saveTransaction(Transaction transaction) {
+        logger.info("{} - Saving transaction {}", LOG_ID, transaction);
         return transactionRepository. save(transaction);
     }
 
     public Transaction saveTransactionRequest(Authentication authentication, TransactionRequest transactionRequest) {
-        // TODO: 17/05/2024 check if amount doesn't exceed account balance
         Transaction transaction = Stream.of(transactionRequest)
                 .map(t -> Transaction.builder()
                         .date(LocalDateTime.now())

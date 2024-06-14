@@ -29,12 +29,10 @@ public class SpringSecurityConfig {
                         .requestMatchers("/js/**").permitAll()
                         .requestMatchers("/register/**").permitAll()
                         .anyRequest().authenticated())
-//                .httpBasic(Customizer.withDefaults())
                 .formLogin(login -> login
                         .loginPage("/login")
                         .permitAll()
                         .defaultSuccessUrl("/home", true))
-//                .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout")))
                 .build();
     }
 
