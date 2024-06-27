@@ -15,8 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/contacts")
 @RequiredArgsConstructor
@@ -34,14 +32,13 @@ public class ContactController {
             Model model,
             Authentication authentication)
     {
-        logger.info("{} - principal: {}", LOG_ID, authentication.getPrincipal());
-        User user = (User) authentication.getPrincipal();
-        List<Contact> contacts =  contactService.getUserContacts(user.getId());
-        logger.info("{} - contacts: {}", LOG_ID, contacts.size());
+//        User user = (User) authentication.getPrincipal();
+        User user = userService.getUser("test@test.com");
 
-        model.addAttribute("contacts", contacts);
+        model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
         model.addAttribute("contactRequest", new ContactRequest(""));
         model.addAttribute("contactUnknown", false);
+        model.addAttribute("breadcrumb", "Contact");
 
         return "contact";
     }
@@ -53,14 +50,18 @@ public class ContactController {
             @Valid ContactRequest contactRequest,
             BindingResult bindingResult)
     {
-        User user = (User) authentication.getPrincipal();
+//        User user = (User) authentication.getPrincipal();
+        User user = userService.getUser("test@test.com");
+
         logger.info("{} - contact request: {}", LOG_ID, contactRequest);
 
         // Validate contact Request - Check for errors
         if (bindingResult.hasErrors()) {
             logger.error("{} - bindingResult errors: {}", LOG_ID, bindingResult.hasFieldErrors("email"));
-            Iterable<Contact> contacts =  contactService.getUserContacts(user.getId());
-            model.addAttribute("contacts", contacts);
+
+            model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
+            model.addAttribute("breadcrumb", "Contact");
+
             return "contact";
         }
 
@@ -69,7 +70,7 @@ public class ContactController {
         if (newContact != null) {
             // Add contact to user's list
             user.getContacts().add(newContact);
-            userService.saveUser(user);
+            userService.save(user);
             logger.info("{} - Contact '{}' added to user contact list", LOG_ID, newContact.getEmail());
 
             model.addAttribute("contactSuccess", true);
@@ -81,31 +82,28 @@ public class ContactController {
             model.addAttribute("contactUnknown", true);
         }
 
-        Iterable<Contact> contacts =  contactService.getUserContacts(user.getId());
-        model.addAttribute("contacts", contacts);
+        model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
+        model.addAttribute("breadcrumb", "Contact");
 
         return "contact";
     }
 
     @GetMapping("/remove-contact")
     public String contactDelete(
-            Model model,
             Authentication authentication,
             @RequestParam String email)
     {
-        User user = (User) authentication.getPrincipal();
         logger.info("{} - contact to remove: {}", LOG_ID, email);
 
-        // Retrieve Contact
-        Contact contactToRemove = contactService.getContact(email).get();
+//        User user = (User) authentication.getPrincipal();
+        User user = userService.getUser("test@test.com");
 
-        // Remove it from user's list
-        userService.removeContactFromUserContacts(user, contactToRemove);
-        List<Contact> contacts =  contactService.getUserContacts(user.getId());
-
-        model.addAttribute("contacts", contacts);
-        model.addAttribute("contactRequest", new ContactRequest(""));
-        model.addAttribute("contactUnknown", false);
+        // Retrieve contact to remove
+        Contact contactToRemove = contactService.getContact(email);
+        // Remove Contact
+        user.removeContact(contactToRemove);
+        // Update user
+        userService.save(user);
 
         return "redirect:/contacts";
     }

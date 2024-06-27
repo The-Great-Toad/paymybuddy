@@ -36,8 +36,8 @@ public class TransactionController {
     private final UserService userService;
 
 
-    @GetMapping()
-    public String transactionView(
+    @GetMapping
+    public String getTransactionView(
             Model model,
             Authentication authentication,
             @RequestParam(required = false) String keyword,
@@ -45,21 +45,24 @@ public class TransactionController {
             @RequestParam(defaultValue = "10") int size)
     {
         logger.info("{} - keyword: {}, page number: {}, pageSize: {}", LOG_ID, keyword, page, size);
-        User user = (User) authentication.getPrincipal();
+//        User user = (User) authentication.getPrincipal();
+        User user = userService.getUser("test@test.com");
+
+        model.addAttribute("user", user);
+        model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
+        model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("breadcrumb", "Transfer");
 
         try {
             Pageable paging = PageRequest.of(page - 1, size, Sort.by("date").descending());
             Page<Transaction> pageTransactions = transactionService.getTransactions(keyword, paging, user);
 
             model.addAttribute("transactions", pageTransactions.getContent());
-            model.addAttribute("contacts", contactService.getContacts());
-            model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
-            model.addAttribute("keyword", keyword);
-            model.addAttribute("currentPage", page);
             model.addAttribute("totalItems", pageTransactions.getTotalElements());
             model.addAttribute("totalPages", pageTransactions.getTotalPages());
-            model.addAttribute("pageSize", size);
-            model.addAttribute("user", user);
         } catch (Exception e) {
             model.addAttribute("exceptionMessage", e.getMessage());
         }
@@ -77,13 +80,15 @@ public class TransactionController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size)
     {
-        User user = (User) authentication.getPrincipal();
+//        User user = (User) authentication.getPrincipal();
+        User user = userService.getUser("test@test.com");
 
         model.addAttribute("user", user);
-        model.addAttribute("contacts", contactService.getContacts());
+        model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
         model.addAttribute("keyword", keyword);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
+        model.addAttribute("breadcrumb", "Transfer");
 
         try {
             Pageable paging = PageRequest.of(page - 1, size, Sort.by("date").descending());
@@ -99,7 +104,7 @@ public class TransactionController {
                 return "transaction";
             }
 
-            Transaction transaction = transactionService.saveTransactionRequest(authentication, transactionRequest);
+            Transaction transaction = transactionService.saveTransactionRequest(user, transactionRequest);
             if (Objects.nonNull(transaction.getId())) {
                 pageTransactions = transactionService.getTransactions(keyword, paging, user);
                 model.addAttribute("transactions", pageTransactions.getContent());

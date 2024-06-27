@@ -3,7 +3,6 @@ package openclassroom.p6.paymybuddy.service;
 import lombok.RequiredArgsConstructor;
 import openclassroom.p6.paymybuddy.constante.Messages;
 import openclassroom.p6.paymybuddy.constante.Regex;
-import openclassroom.p6.paymybuddy.domain.Account;
 import openclassroom.p6.paymybuddy.domain.Contact;
 import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.UserInfoRequest;
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -36,19 +33,26 @@ public class UserService {
 
     private final  ContactService contactService;
 
-    private final AccountService accountService;
-
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Iterable<User> getUsers() {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUser(String email) {
-        return userRepository.findByEmail(email);
+    public User getUser(String email) {
+
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if (user.isPresent()) {
+            logger.info("{} - User found with email: {}", LOG_ID, user.get().getEmail());
+            return user.get();
+        } else {
+            logger.info("{} - User with email {} not found", LOG_ID, email);
+            return null;
+        }
     }
 
-    public User saveUser(User user) {
+    public User save(User user) {
         return userRepository.save(user);
     }
 
@@ -59,37 +63,7 @@ public class UserService {
 
     public User getPrincipal() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-
-    public void removeContactFromUserContacts(User user, Contact contactToRemove) {
-
-//        boolean isContactInUserContactList = user.getContacts().contains(contactToRemove);
-//        if (isContactInUserContactList) {
-//            logger.info("{} - Before removal - user contact list size: {}", LOG_ID, user.getContacts().size());
-//            user.getContacts().remove(contactToRemove);
-//            logger.info("{} - After removal - user contact list size: {}", LOG_ID, user.getContacts().size());
-//            userRepository.save(user);
-//        } else {
-//            logger.error("{} - Contact not in User Contacts", LOG_ID);
-//        }
-
-        // todo: ask mentor why contact doesn't match from user's contacts list ?????
-
-        List<Contact> contactList = new ArrayList<>();
-        user.getContacts().forEach(contact -> {
-            if (contact.getEmail().equals(contactToRemove.getEmail())) {
-                logger.info("{} - Contact is in user's contact list", LOG_ID);
-                contactList.add(contact);
-            }
-        });
-
-        if (contactList.isEmpty()) {
-            logger.error("{} - Contact not in User Contacts", LOG_ID);
-        } else {
-            logger.info("{} - removing contact '{}' from user's contacts list", LOG_ID, contactList.get(0).getEmail());
-            user.getContacts().remove(contactList.get(0));
-            userRepository.save(user);
-        }
+        // todo: use method
     }
 
     public BindingResult validateUserPwdRequest(UserPasswordRequest userPwdRequest, User user, BindingResult bindingResult) {
@@ -154,22 +128,17 @@ public class UserService {
             return null;
         }
 
-        int lastAccountId = 10;
-        Account newAccount = accountService.saveAccount(Account.builder()
-                .id(++lastAccountId)
-                .available_balance(5000)
-                .build());
-        logger.info("{} - New account created: {}", LOG_ID, newAccount.getId());
-
+        // save new user email as contact
         Contact registeredUserAsContact = contactService.saveContact(userRequest.email());
         logger.info("{} - Contact created: {}", LOG_ID, registeredUserAsContact.getEmail());
 
+        // save new user
         User registeredUser = userRepository.save(User.builder()
                 .lastname(userRequest.lastname())
                 .firstname(userRequest.firstname())
                 .email(userRequest.email())
                 .password(passwordEncoder.encode(userRequest.password()))
-                .account(newAccount)
+                .balance(5000)
                 .role(User.Role.USER)
                 .build());
         logger.info("{} - user registered: {}", LOG_ID, registeredUser.getEmail());
@@ -179,5 +148,29 @@ public class UserService {
 
     private boolean emailExits(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    public BindingResult validateWithdrawal(double balance, double withdrawal, BindingResult bindingResult) {
+
+        if (withdrawal > balance) {
+            bindingResult.addError(new FieldError("amountRequest", "amount", Messages.ACCOUNT_INSUFFICIENT_FUNDS));
+        }
+        return bindingResult;
+    }
+
+    public void withdraw(User user, double withdrawal) {
+        double balance = user.getBalance();
+        logger.info("{} - Withdrawing: ${} from account balance: ${}", LOG_ID, withdrawal, balance);
+        user.setBalance(balance - withdrawal);
+        logger.info("{} - Account balance after withdraw: ${}", LOG_ID, user.getBalance());
+        userRepository.save(user);
+    }
+
+    public void deposit(User user, double deposit) {
+        double balance = user.getBalance();
+        logger.info("{} - Depositing: ${} to account balance: ${}", LOG_ID, deposit, balance);
+        user.setBalance(balance + deposit);
+        logger.info("{} - Account balance after deposit: ${}", LOG_ID, user.getBalance());
+        userRepository.save(user);
     }
 }

@@ -1,5 +1,5 @@
 const passwordInput = document.querySelector("#new-password");
-const eyeIcon = document.querySelector("#icon-new-pwd");
+const eyeIcon = document.querySelector(".new-pwd");
 const requirementList = document.querySelectorAll(".requirement-list li");
 
 const requirements = [

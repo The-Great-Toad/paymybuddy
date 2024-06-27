@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,22 +23,23 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/js/**").permitAll()
-                        .requestMatchers("/register/**").permitAll()
-                        .anyRequest().authenticated())
-                .formLogin(login -> login
-                        .loginPage("/login")
-                        .permitAll()
-                        .defaultSuccessUrl("/home", true))
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers("/css/**").permitAll()
+//                        .requestMatchers("/js/**").permitAll()
+//                        .requestMatchers("/register/**").permitAll()
+//                        .anyRequest().authenticated())
+//                .formLogin(login -> login
+//                        .loginPage("/login")
+//                        .permitAll()
+//                        .defaultSuccessUrl("/home", true))
                 .build();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userService.getUser(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//        return username -> userService.getUser(username)
+//                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return userService::getUser;
     }
 
     @Bean

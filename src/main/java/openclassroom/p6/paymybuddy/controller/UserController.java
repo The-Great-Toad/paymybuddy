@@ -35,20 +35,20 @@ public class UserController {
     @GetMapping
     public String profileView(Model model) {
 
-        User user = userService.getPrincipal();
+//        User user = userService.getPrincipal();
+        User user = userService.getUser("test@test.com");
+
         UserInfoRequest userInfoRequest = new UserInfoRequest(user.getLastname(), user.getFirstname());
         UserPasswordRequest userPasswordRequest = new UserPasswordRequest("","","");
         AmountRequest amountRequest = new AmountRequest(0);
 
-        logger.info("{} - user: {}, account balance: {}", LOG_ID, user.getEmail(), user.getAccount().getAvailable_balance());
-//        UserInfoRequest userInfoRequest = new UserInfoRequest("user.getLastname()", "user.getFirstname()");
-//        Account account = Account.builder().balance(5000).build();
-//        User user = User.builder().account(account).build();
+        logger.info("{} - user: {}, account balance: {}", LOG_ID, user.getEmail(), user.getBalance());
 
         model.addAttribute("user", user);
         model.addAttribute("userInfoRequest", userInfoRequest);
         model.addAttribute("userPasswordRequest", userPasswordRequest);
         model.addAttribute("amountRequest", amountRequest);
+        model.addAttribute("breadcrumb", "Profile");
 
         return "profile";
     }
@@ -61,7 +61,9 @@ public class UserController {
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes)
     {
-        User user = (User) authentication.getPrincipal();
+//        User user = (User) authentication.getPrincipal();
+        User user = userService.getUser("test@test.com");
+
         logger.info("{} - UserInfoRequest: {}", LOG_ID, userInfoRequest);
 
         if (bindingResult.hasErrors()) {
@@ -73,6 +75,7 @@ public class UserController {
             model.addAttribute("userPasswordRequest", userPasswordRequest);
             model.addAttribute("amountRequest", amountRequest);
             model.addAttribute("user", user);
+            model.addAttribute("breadcrumb", "Profile");
 
             return "profile";
         }
@@ -93,7 +96,9 @@ public class UserController {
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes)
     {
-        User user = (User) authentication.getPrincipal();
+//        User user = (User) authentication.getPrincipal();
+        User user = userService.getUser("test@test.com");
+
         logger.info("{} - userPwdRequest: {}", LOG_ID, userPasswordRequest);
 
         bindingResult = userService.validateUserPwdRequest(userPasswordRequest, user, bindingResult);
@@ -107,6 +112,7 @@ public class UserController {
             model.addAttribute("userInfoRequest", userInfoRequest);
             model.addAttribute("amountRequest", amountRequest);
             model.addAttribute("user", user);
+            model.addAttribute("breadcrumb", "Profile");
 
             return "profile";
         }

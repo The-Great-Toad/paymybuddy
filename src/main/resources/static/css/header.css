@@ -1,0 +1,25 @@
+@import "styles.css";
+
+header nav {
+    background-color: #FFFFFF !important;
+    padding: 0 !important;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+header a.navbar-brand button {
+    height: 3.4rem;
+    width: 12rem;
+    font-size: 1.2rem;
+}
+
+#navbarNav {
+    flex-grow: 0;
+}
+
+.current-page {
+    color: var(--color-secondary);
+}
+.current-page:hover {
+    color: var(--color-secondary-hover);
+}

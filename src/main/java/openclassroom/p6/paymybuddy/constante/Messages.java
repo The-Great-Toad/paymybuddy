@@ -7,11 +7,14 @@ public class Messages {
 
     // Validation
     public static final String ALPHA_CHAR_ONLY = "Please enter alphabetic characters";
-    public static final String REQUIRED = "This field is required";
+    public static final String REQUIRED = "Please enter a valid email";
 
+    // Email
     public static final String EMAIL_ALREADY_USED = "An account for that email already exists";
-    public static final String EMAIL_INVALID = "Invalid email address";
+    public static final String EMAIL_INVALID = "Please enter a valid email";
+    public static final String EMAIL_NOT_NULL = "Please enter an email";
 
+    // Password
     public static final String OLD_PWD_NOT_NULL = "Please enter your current password";
     public static final String NEW_PWD_NOT_NULL = "Please enter a new password";
     public static final String CONFIRM_PWD_NOT_NULL = "Please confirm your new password";
@@ -19,6 +22,7 @@ public class Messages {
     public static final String PASSWORD_NOT_MATCH = "Passwords do not match";
     public static final String PASSWORD_INVALID = "Invalid password";
 
+    // Account
     public static final String ACCOUNT_INSUFFICIENT_FUNDS = "Insufficient funds";
     public static final String ACCOUNT_MIN_DEPOSIT = "Minimum amount of €10 for deposit/withdrawal";
 

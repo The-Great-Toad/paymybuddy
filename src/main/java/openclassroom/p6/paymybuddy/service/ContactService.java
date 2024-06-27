@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,14 +21,35 @@ public class ContactService {
     @Autowired
     private ContactRepository contactRepository;
 
-    public Iterable<Contact> getContacts() {
-        return contactRepository.findAll();
+    public List<Contact> getContacts() {
+        return List.copyOf(contactRepository.findAll());
     }
 
-    public List<Contact> getUserContacts(int id) { return contactRepository.findUserContact(id); }
+    public List<String> getUserContactList(String email) {
+        logger.debug("{} - Retrieving contacts for user: {}", LOG_ID, email);
+        List<Contact> userContactList = contactRepository.findAllContactByUserEmail(email);
 
-    public Optional<Contact> getContact(String email) {
-        return contactRepository.findByEmail(email);
+        if (userContactList.isEmpty()) {
+            logger.info("{} - No contact found for user: {}", LOG_ID, email);
+            return new ArrayList<>();
+        }
+        logger.info("{} - Retrieved {} contact(s) for user: {}", LOG_ID, userContactList.size(), email);
+
+        return userContactList.stream()
+                .map(Contact::getEmail)
+                .toList();
+    }
+
+    public Contact getContact(String email) {
+        Optional<Contact> contact = contactRepository.findByEmail(email);
+
+        if (contact.isPresent()) {
+            logger.info("{} - Retrieved contact: {}", LOG_ID, contact.get());
+            return contact.get();
+        }
+
+        logger.error("{} - No contact found for email: {}", LOG_ID, email);
+        return null;
     }
 
     public void deleteContact(String email) {
@@ -45,5 +67,10 @@ public class ContactService {
                 .build();
 
         return contactRepository.save(newContact);
+    }
+
+    public List<Contact> getRecentContacts(String email) {
+        return new ArrayList<>();
+        //todo
     }
 }

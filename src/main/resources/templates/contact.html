@@ -1,15 +1,20 @@
 <!doctype html>
-<html th:replace="~{baseLayout :: layout(~{::title}, _, _,  ~{::div.container})}">
+<html th:replace="~{baseLayout ::layout (~{::title}, ~{::link}, ~{::script},  ~{::div.container}, ${breadcrumb})}">
 <head>
     <title>Contact</title>
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/contact.css}">
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/table-filter.css}">
+    <!-- JS -->
+    <script th:src="@{/js/table-filter.js}" defer></script>
 </head>
 <body>
 
 <div class="container">
 
-    <h3>Add a contact</h3>
-    <!-- CONTACT FORM -->
-    <form action="#" method="post" class="row g-1 contact-form"
+    <h3>Add New Connection</h3>
+    <!-- FORM CONTACT REQUEST -->
+    <form action="#" method="post" class="row g-1 contact-form mt-2"
           th:action="@{/contacts}" th:object="${contactRequest}">
         <div class="col-md-6">
             <input type="text" class="form-control" placeholder="Enter email..." aria-label="contact email"
@@ -18,36 +23,34 @@
             <div class="invalid-feedback" th:if="${contactUnknown}">Contact not found...</div>
         </div>
         <div class="col-auto">
-            <button type="submit" class="btn btn-primary form-btn">Add</button>
+            <button type="submit" class="btn btn-primary form-btn btn-wide">Add</button>
         </div>
     </form>
 
-    <h3>Contacts</h3>
+    <!-- CONTACT LIST -->
+    <h3 class="mt-2">Contacts</h3>
+
     <!-- FILTER -->
-    <form action="#" class="row g-1 contact-filter">
-        <div class="col-auto">
-            <label for="keyword" class="col-form-label">Search:</label>
-        </div>
-        <div class="col-auto">
-            <input type="text" class="form-control" id="keyword">
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Search</button>
-            <a th:href="@{/contacts}" class="btn btn-danger">Clear</a>
-        </div>
-    </form>
+    <div th:replace="~{/fragments/table-filter}"></div>
+
     <!-- TABLE -->
-    <table class="table table-striped">
+    <table class="table table-striped mt-2">
         <thead>
-            <tr>
-                <th scope="col">Email</th>
+            <tr class="thead">
+                <th class="th-email" scope="col">Email</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
-        <tr th:each="contact : ${contacts}">
-            <td th:text="${contact.email}">email</td>
-            <td><a th:href="@{/contacts/remove-contact(email=${contact.email})}" class="btn btn-danger">Delete</a></td>
+        <tr class="tr-content" th:each="contact : ${contacts}">
+            <td th:text="${contact}">email</td>
+<!--            <td><a th:href="@{/contacts/remove-contact(email=${contact})}" class="btn btn-danger">Delete</a></td>-->
+            <td>
+                <a th:href="@{/contacts/remove-contact(email=${contact})}" class="btn btn-secondary"
+                   title="remove contact" aria-label="remove contact">
+                    <i class="fa-solid fa-user-xmark"></i>
+                </a>
+            </td>
         </tr>
         </tbody>
     </table>

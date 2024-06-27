@@ -7,7 +7,7 @@ import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.AmountRequest;
 import openclassroom.p6.paymybuddy.domain.record.UserInfoRequest;
 import openclassroom.p6.paymybuddy.domain.record.UserPasswordRequest;
-import openclassroom.p6.paymybuddy.service.AccountService;
+import openclassroom.p6.paymybuddy.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -20,13 +20,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/accounts")
+@RequestMapping("/balance")
 public class AccountController {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
     private static final String LOG_ID = "[AccountController]";
 
-    private final AccountService accountService;
+    private final UserService userService;
 
     @PostMapping("/withdraw")
     public String withdraw(
@@ -39,11 +39,11 @@ public class AccountController {
         logger.info("{} - withdraw amountRequest: {}", LOG_ID, withdrawal);
         User user = (User) authentication.getPrincipal();
 
-        bindingResult = accountService.validateWithdrawal(user.getAccount(), withdrawal.amount(), bindingResult);
+        bindingResult = userService.validateWithdrawal(user.getBalance(), withdrawal.amount(), bindingResult);
 
         if (bindingResultHasErrors(model, bindingResult, user)) return "profile";
 
-        accountService.withdraw(user.getAccount(), withdrawal.amount());
+        userService.withdraw(user, withdrawal.amount());
         redirectAttributes.addFlashAttribute("success", Messages.WITHDRAW_SUCCESS);
 
         return "redirect:/profile";
@@ -62,7 +62,7 @@ public class AccountController {
 
         if (bindingResultHasErrors(model, bindingResult, user)) return "profile";
 
-        accountService.deposit(user.getAccount(), deposit.amount());
+        userService.deposit(user, deposit.amount());
         redirectAttributes.addFlashAttribute("success", Messages.DEPOSIT_SUCCESS);
 
         return "redirect:/profile";
@@ -77,6 +77,7 @@ public class AccountController {
             model.addAttribute("user", user);
             model.addAttribute("userInfoRequest", userInfoRequest);
             model.addAttribute("userPasswordRequest", userPasswordRequest);
+            model.addAttribute("breadcrumb", "Profile");
 
             return true;
         }

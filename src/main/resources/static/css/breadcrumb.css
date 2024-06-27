@@ -1,0 +1,16 @@
+@import "styles.css";
+
+nav#breadcrumb {
+    background-color: var(--color-bg);
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+    padding-left: 2rem;
+}
+
+nav#breadcrumb a {
+    text-decoration: none;
+    color: var(--color-secondary);
+}
+nav#breadcrumb a:hover {
+    color: var(--color-secondary-hover);
+}

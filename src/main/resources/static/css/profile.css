@@ -1,50 +1,42 @@
-.my-card, .pwd-card {
+@import "styles.css";
+
+section.grid {
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    /*grid-gap: 1rem;*/
-    border: 1px black solid;
-    border-radius: 10px;
-    box-shadow: 10px 5px lightgrey;
-    margin-bottom: 2rem;
-}
-.pwd-card {
-    grid-template-columns: auto auto 1fr auto;
+    grid-template-columns: 1fr 1fr;
 }
 
-.card-image {
-    overflow: hidden;
-}
-.image {
-    width: 100%;
-    height: 100%;
+section.user-info {
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
     padding: 1rem;
+}
+
+section.user-info div.header {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-right: 1px black solid;
-}
-.image i {
-    font-size: 5rem;
-}
-
-.card-content {
-    width: 100%;
-    padding: 1rem;
-}
-
-.item {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 0.5rem 0 0.5rem 1rem;
     margin-bottom: 0.5rem;
+    border-radius: 5px;
+    box-shadow: 1px 3px 9px 0 #717171;
 }
 
-.card-footer {
-    display: flex;
-    justify-content: end;
+section.user-info div.header i {
+    font-size: 1.5rem;
+    margin-right: 1.5rem;
 }
 
-.form-btn {
-    align-self: end;
-    margin-bottom: 1.5rem;
-    margin-right: 1rem;
+section.user-info div.content {
+    width: 100% !important;
+}
+
+section.user-info form div.form-btn {
+    margin-top: 1rem;
+    text-align: end;
 }
 
 .pwd-field {
@@ -65,4 +57,33 @@
 
 .form-text {
     margin: 0.5rem !important;
+}
+
+/* PASSWORD POLICY */
+div.pwd-policy {
+    padding: 0;
+}
+span.requirement-title {
+    font-size: 1.5rem;
+    background-color: var(--color-primary);
+    color: white;
+    text-align: center;
+    padding: 0.5rem 0 0.5rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    box-shadow: 1px 3px 9px 0 #717171;
+}
+ul.requirement-list {
+    padding-left: 2rem;
+    margin-top: 2rem;
+}
+ul.requirement-list li {
+    margin-bottom: 0.5rem;
+}
+
+@media screen and (max-width: 750px) {
+    section.grid {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
 }

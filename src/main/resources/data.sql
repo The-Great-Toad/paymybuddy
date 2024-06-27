@@ -1,28 +1,15 @@
-INSERT INTO account(available_balance, balance, pending_balance)
+INSERT INTO users(email, firstname, lastname, password, role, balance)
 VALUES
-    (5000, 5000, 5000),
-    (5000, 5000, 5000),
-    (5000, 5000, 5000),
-    (5000, 5000, 5000),
-    (5000, 5000, 5000),
-    (5000, 5000, 5000),
-    (5000, 5000, 5000),
-    (5000, 5000, 5000),
-    (5000, 5000, 5000),
-    (5000, 5000, 5000);
-
-INSERT INTO users(email, firstname, lastname, password, role, account_id)
-VALUES
-    ('test@test.com', 'test', 'test', '$2a$10$bFfnHsj1di5AeMftBY4upu88zLZ43PPeSNKE5.n.N.aaNNv9hNIw.', 'USER', 1),
-    ('clara@mail.com', 'Clara', 'Kent', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 2),
-    ('patrick@mail.com', 'Patrick', 'Dupond', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 3),
-    ('david@mail.com', 'David', 'Todd', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 4),
-    ('john@mail.com', 'John', 'Smith', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 5),
-    ('erick@mail.com', 'Erick', 'Parse', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 6),
-    ('maxime@mail.com', 'Maxime', 'Bond', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 7),
-    ('jonathan@mail.com', 'Jonathan', 'Port', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 8),
-    ('franck@mail.com', 'Franck', 'Lucas', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 9),
-    ('luc@mail.com', 'Luc', 'Valet', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 10);
+    ('test@test.com', 'test', 'test', '$2a$10$bFfnHsj1di5AeMftBY4upu88zLZ43PPeSNKE5.n.N.aaNNv9hNIw.', 'USER', 5000),
+    ('clara@mail.com', 'Clara', 'Kent', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 5000),
+    ('patrick@mail.com', 'Patrick', 'Dupond', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 5000),
+    ('david@mail.com', 'David', 'Todd', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 5000),
+    ('john@mail.com', 'John', 'Smith', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 5000),
+    ('erick@mail.com', 'Erick', 'Parse', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 5000),
+    ('maxime@mail.com', 'Maxime', 'Bond', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 5000),
+    ('jonathan@mail.com', 'Jonathan', 'Port', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 5000),
+    ('franck@mail.com', 'Franck', 'Lucas', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 5000),
+    ('luc@mail.com', 'Luc', 'Valet', '$2a$10$IzT8G1hYKJjRNlDr4HzlW.YgTwpUsijy0wKKYdRHKb9uQjOuBS1ea', 'USER', 5000);
 
 INSERT INTO contact(email)
 VALUES

@@ -9,8 +9,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
 
-    Page<Transaction> findAllByReceiverIdOrSenderIdAndDescriptionIsContainingIgnoreCaseOrderByDateDesc(
-            Integer receiverId, Integer senderId, String description, Pageable pageable);
+    Page<Transaction> findTransactionsBySenderEmailOrReceiverEmailAndDescriptionIsContainingIgnoreCaseOrderByDateDesc(
+            String senderEmail,
+            String receiverEmail,
+            String description,
+            Pageable pageable);
 
-    Page<Transaction> findAllByReceiverIdOrSenderIdOrderByDateDesc(int receiverId, int senderId, Pageable pageable);
+    Page<Transaction> findTransactionsBySenderEmailOrReceiverEmail(String senderEmail, String receiverEmail, Pageable pageable);
 }

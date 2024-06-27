@@ -26,11 +26,7 @@ public class User implements UserDetails {
     public enum Role { USER, ADMIN }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private Integer id;
-
-    @Column(unique = true)
+//    @Column(unique = true)
     private String email;
 
     private String firstname;
@@ -39,31 +35,18 @@ public class User implements UserDetails {
 
     private String password;
 
+    private double balance;
+
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
-    @JoinColumn(name = "account_id")
-//    @OneToOne(mappedBy = "user", cascade = { CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
-    private Account account;
-
-    @ManyToMany(
-            fetch = FetchType.EAGER,
-            cascade = {
-                    CascadeType.PERSIST,
-//                    CascadeType.MERGE
-            }
-    )
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "user_contact",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "contact_id")
     )
     private List<Contact> contacts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<Notification> notifications = new ArrayList<>();
-
 
     public void addContact(Contact contact) {
         contacts.add(contact);
@@ -73,14 +56,6 @@ public class User implements UserDetails {
     public void removeContact(Contact contact) {
         contacts.remove(contact);
         contact.removeUser(this);
-    }
-
-    public void addNotification(Notification notification) {
-        notifications.add(notification);
-    }
-
-    public void removeNotification(Notification notification) {
-        notifications.remove(notification);
     }
 
     @Override

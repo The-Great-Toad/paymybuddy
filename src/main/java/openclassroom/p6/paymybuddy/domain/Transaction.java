@@ -18,20 +18,22 @@ import java.time.LocalDateTime;
 @Table(name = "transactions")
 public class Transaction {
 
+    public static final double FEE_RATE = 0.005;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Integer id;
 
-    private Integer senderId;
+    private String senderEmail;
 
-    private Integer receiverId;
+    private String receiverEmail;
 
     private String description;
 
     private double amount;
 
-    private double fee = amount * 0.05;
+    private double fee = amount * FEE_RATE;
 
     private LocalDateTime date;
 

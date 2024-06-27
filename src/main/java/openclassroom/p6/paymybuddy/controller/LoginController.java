@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import openclassroom.p6.paymybuddy.constante.Messages;
 import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.UserRequest;
+import openclassroom.p6.paymybuddy.service.ContactService;
+import openclassroom.p6.paymybuddy.service.TransactionService;
 import openclassroom.p6.paymybuddy.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +27,20 @@ public class LoginController {
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
     private final String LOG_ID = "[LoginController]";
     private final UserService userService;
+    private final TransactionService transactionService;
+    private final ContactService contactService;
 
     // Home page
-    @GetMapping({"/home", "index.html"})
-    public String home() {
+    @GetMapping({"/", "index.html"})
+    public String home(Model model, Authentication authentication) {
+//        User user = (User) authentication.getPrincipal();
+        User user = userService.getUser("test@test.com");
+
+        model.addAttribute("user", user);
+        model.addAttribute("breadcrumb", "");
+        model.addAttribute("recentTransactions", transactionService.getRecentTransactions(user.getEmail()));
+        model.addAttribute("recentContacts", contactService.getRecentContacts(user.getEmail()));
+
         return "index";
     }
 
@@ -37,11 +49,6 @@ public class LoginController {
     public String showLoginForm() {
         return "login";
     }
-
-//    @PostMapping("/login")
-//    public String login() {
-//        return "index";
-//    }
 
     // logout
     @GetMapping("/logout")

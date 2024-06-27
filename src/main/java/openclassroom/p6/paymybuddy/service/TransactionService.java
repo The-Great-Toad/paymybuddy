@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service
@@ -27,20 +27,20 @@ public class TransactionService {
 
 
     public Page<Transaction> getTransactions(String keyword, Pageable p, User user) {
-        int accountId = user.getAccount().getId();
+        String email = user.getEmail();
         Page<Transaction> transactions;
 
         if (keyword == null) {
             logger.info("{} - Retrieving transactions for {}, no keyword", LOG_ID, user.getEmail());
-            transactions = transactionRepository.findAllByReceiverIdOrSenderIdOrderByDateDesc(
-                    accountId,
-                    accountId,
+            transactions = transactionRepository.findTransactionsBySenderEmailOrReceiverEmail(
+                    email,
+                    email,
                     p);
         } else {
             logger.info("{} - Retrieving transactions for {}, with keyword {}", LOG_ID, user.getEmail(), keyword);
-            transactions = transactionRepository.findAllByReceiverIdOrSenderIdAndDescriptionIsContainingIgnoreCaseOrderByDateDesc(
-                    accountId,
-                    accountId,
+            transactions = transactionRepository.findTransactionsBySenderEmailOrReceiverEmailAndDescriptionIsContainingIgnoreCaseOrderByDateDesc(
+                    email,
+                    email,
                     keyword,
                     p);
         }
@@ -48,8 +48,21 @@ public class TransactionService {
         return transactions;
     }
 
-    public Optional<Transaction> getTransaction(Integer id) {
-        return transactionRepository.findById(id);
+    public Transaction saveTransactionRequest(User user, TransactionRequest transactionRequest) {
+        double amount = Math.floor(Double.parseDouble(transactionRequest.amount()) * 100) / 100;
+        double fee = Math.floor((amount * Transaction.FEE_RATE) * 100) / 100;
+        Transaction transaction = Stream.of(transactionRequest)
+                .map(t -> Transaction.builder()
+                        .senderEmail(user.getEmail())
+                        .receiverEmail(t.receiver())
+                        .description(t.description())
+                        .amount(amount + fee)
+                        .fee(fee)
+                        .date(LocalDateTime.now())
+                        .build())
+                .toList()
+                .get(0);
+        return saveTransaction(transaction);
     }
 
     public Transaction saveTransaction(Transaction transaction) {
@@ -57,15 +70,8 @@ public class TransactionService {
         return transactionRepository. save(transaction);
     }
 
-    public Transaction saveTransactionRequest(Authentication authentication, TransactionRequest transactionRequest) {
-        Transaction transaction = Stream.of(transactionRequest)
-                .map(t -> Transaction.builder()
-                        .date(LocalDateTime.now())
-                        .description(t.description())
-                        .amount(Double.parseDouble(t.amount()))
-                        .build())
-                .toList()
-                .get(0);
-        return saveTransaction(transaction);
+    public List<Transaction> getRecentTransactions(String email) {
+        return new ArrayList<>();
+        //todo
     }
 }

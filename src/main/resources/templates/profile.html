@@ -1,5 +1,5 @@
 <!doctype html>
-<html th:replace="~{baseLayout :: layout(~{::title}, ~{::link}, ~{::script},  ~{::section})}">
+<html th:replace="~{baseLayout ::layout (~{::title}, ~{::link}, ~{::script},  ~{::section}, ${breadcrumb})}">
 <head>
     <title>Profile</title>
 
@@ -11,22 +11,25 @@
 </head>
 <body>
 
-<section class="container">
+<section class="container grid">
 
-    <h3>My Information</h3>
-    <div class="my-card">
-        <div class="card-image">
-            <div class="image">
-                <i class="fa-solid fa-user-large"></i>
-            </div>
+    <!-- USER INFORMATIONS -->
+    <section class="user-info">
+        <!-- HEADER -->
+        <div class="header">
+            <i class="fa-solid fa-user-large"></i>
+            <h4>My Information</h4>
         </div>
-        <div class="card-content col-md-6">
+
+        <!-- CONTENT -->
+        <div class="content col-md-6">
             <!-- EMAIL -->
             <div class="email">
                 <label for="email" class="col-form-label">Email:</label>
                 <input type="text" id="email" class="form-control" aria-label="Disabled input example" disabled
                        th:value="${user.email}">
             </div>
+
             <form action="#" method="post" id="user-info-form" th:action="@{/profile/info}" th:object="${userInfoRequest}">
                 <!-- LASTNAME -->
                 <div class="item">
@@ -42,25 +45,63 @@
                            th:field="*{firstname}" th:value="*{firstname}" th:classappend="${#fields.hasErrors('firstname')}? 'is-invalid'">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}">firstname Error</div>
                 </div>
+                <!-- SUBMIT -->
+                <div class="form-btn">
+                    <button type="submit" class="btn btn-secondary" onclick="submitUserInfo()">Update Info</button>
+                </div>
             </form>
         </div>
-        <!-- SUBMIT -->
-        <div class="card-footer">
-            <div class="form-btn btn-user-info">
-                <button type="submit" class="btn btn-primary" onclick="submitUserInfo()">Update Info</button>
-            </div>
-        </div>
-    </div>
+    </section>
 
-    <h3>Change my password</h3>
-    <div class="pwd-card">
-        <div class="card-image">
-            <div class="image">
-                <i class="fa-solid fa-key"></i>
-            </div>
+    <!-- USER ACCOUNT -->
+    <section class="user-info">
+        <!-- HEADER -->
+        <div class="header">
+            <i class="fa-solid fa-vault"></i>
+            <h4>My Account</h4>
         </div>
-        <div class="password-policy" th:replace="~{/fragments/password-policy}"></div>
-        <div class="card-content col-md-6">
+
+        <!-- CONTENT -->
+        <div class="content col-md-6">
+            <!-- USER ACCOUNT BALANCE -->
+            <div class="balance">
+                <label for="balance" class="col-form-label">Your account balance:</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="text" id="balance" class="form-control" th:value="*{user.balance}" disabled>
+                </div>
+            </div>
+            <!-- Deposit / Withdraw -->
+            <form action="#" method="post" id="deposit-withdraw-form" th:object="${amountRequest}">
+                <label for="amount" class="col-form-label">Enter amount:</label>
+                <div class="input-group form-amount">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="amount" min="10" step="0.01"  aria-label="Amount"
+                           th:field="*{amount}" th:classappend="${#fields.hasErrors('amount')}? 'is-invalid'" th:placeholder="'minimum amount of 10.00€'">
+                    <!--                    <div class="form-text" id="basic-addon4">Available balance: <span class="available_balance" th:text="'$'+${user.balance}"></span></div>-->
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</div>
+                </div>
+                <!-- SUBMIT -->
+                <div class="form-btn btn-deposit">
+                    <button type="submit" id="deposit" class="btn btn-primary" onclick="submitDeposit()">Make Deposit</button>
+                    <button type="submit" id="withdraw" class="btn btn-secondary" onclick="submitWithdraw()">Make Withdrawal</button>
+                </div>
+                <!--                <div class="form-btn btn-withdraw">-->
+                <!--                </div>-->
+            </form>
+        </div>
+    </section>
+
+    <!-- USER PASSWORD -->
+    <section class="user-info">
+        <!-- HEADER -->
+        <div class="header">
+            <i class="fa-solid fa-key"></i>
+            <h4>Change My Password</h4>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content col-md-6">
             <form action="#" method="post" id="user-pwd-form" th:action="@{/profile/password}" th:object="${userPasswordRequest}">
                 <!-- OLD-PASSWORD -->
                 <div class="item">
@@ -71,7 +112,6 @@
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('oldPassword')}" th:errors="*{oldPassword}">oldPassword Error</div>
                         <i class="fa-solid fa-eye old-pwd"></i>
                     </div>
-
                 </div>
                 <!-- NEW PASSWORD -->
                 <div class="item">
@@ -93,53 +133,18 @@
                         <i class="fa-solid fa-eye confirm-pwd"></i>
                     </div>
                 </div>
+                <!-- SUBMIT -->
+                <div class="form-btn btn-user-pwd">
+                    <button type="submit" class="btn btn-secondary" onclick="submitUserPwd()">Change Password</button>
+                </div>
             </form>
         </div>
-        <!-- SUBMIT -->
-        <div class="card-footer">
-            <div class="form-btn btn-user-pwd">
-                <button type="submit" class="btn btn-primary" onclick="submitUserPwd()">Change Password</button>
-            </div>
-        </div>
-    </div>
+    </section>
 
-    <h3>My Account</h3>
-    <div class="my-card">
-        <div class="card-image">
-            <div class="image">
-                <i class="fa-solid fa-vault"></i>
-            </div>
-        </div>
-        <div class="card-content col-md-6">
-            <!-- CONFIRM PASSWORD -->
-            <div class="item">
-                <label for="balance" class="col-form-label">Your account balance:</label>
-                <div class="input-group">
-                    <span class="input-group-text">$</span>
-                    <input type="text" id="balance" class="form-control" th:value="*{user.account.available_balance}" disabled>
-                </div>
-            </div>
-            <!-- Deposit / Withdraw -->
-            <form action="#" method="post" id="deposit-withdraw-form" th:object="${amountRequest}">
-                <div class="input-group form-amount">
-                    <span class="input-group-text">$</span>
-                    <input type="number" class="form-control" id="amount" min="10" step="0.01"  aria-label="Amount"
-                           th:field="*{amount}" th:classappend="${#fields.hasErrors('amount')}? 'is-invalid'" th:placeholder="'minimum amount of 10.00€'">
-<!--                    <div class="form-text" id="basic-addon4">Available balance: <span class="available_balance" th:text="'$'+${user.account.available_balance}"></span></div>-->
-                    <div class="invalid-feedback" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</div>
-                </div>
-            </form>
-        </div>
-        <!-- SUBMIT -->
-        <div class="card-footer">
-            <div class="form-btn btn-deposit">
-                <button type="submit" id="deposit" class="btn btn-primary" onclick="submitDeposit()">Make Deposit</button>
-            </div>
-            <div class="form-btn btn-withdraw">
-                <button type="submit" id="withdraw" class="btn btn-warning" onclick="submitWithdraw()">Make Withdrawal</button>
-            </div>
-        </div>
-    </div>
+    <!-- PASSWORD POLICY -->
+    <section class="user-info">
+        <div class="password-policy" th:replace="~{/fragments/password-policy}"></div>
+    </section>
 
 </section>
 
