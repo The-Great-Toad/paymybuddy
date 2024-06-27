@@ -71,7 +71,14 @@ public class TransactionService {
     }
 
     public List<Transaction> getRecentTransactions(String email) {
-        return new ArrayList<>();
-        //todo
+        List<Transaction> recentTransactions = transactionRepository.findRecentTransactions(email);
+
+        if (recentTransactions.isEmpty()) {
+            logger.info("{} - No recent transactions found for email {}", LOG_ID, email);
+            return new ArrayList<>();
+        } else {
+            logger.info("{} - Found {} recent transactions for email {}", LOG_ID, recentTransactions.size(), email);
+            return recentTransactions;
+        }
     }
 }
