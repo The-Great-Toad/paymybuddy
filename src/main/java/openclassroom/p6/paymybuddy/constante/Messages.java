@@ -11,6 +11,9 @@ public class Messages {
     public static final String EMAIL_INVALID = "Please enter a valid email";
     public static final String EMAIL_NOT_NULL = "Please enter an email";
 
+    // Transaction
+    public static final String RECEIVER_NOT_NULL = "Please select a contact";
+
     // Password
     public static final String OLD_PWD_NOT_NULL = "Please enter your current password";
     public static final String NEW_PWD_NOT_NULL = "Please enter a new password";
@@ -33,6 +36,7 @@ public class Messages {
     public static final String LOGOUT_SUCCESS = "You have been logged out";
     public static final String CONTACT_REMOVAL_SUCCESS = "%s removed from your list of contacts";
     public static final String CONTACT_ADDED_SUCCESS = "%s added to your list of contacts";
+    public static final Object TRANSFER_SUCCESS = "Your transfer was successful";
 
     private Messages() {}
 

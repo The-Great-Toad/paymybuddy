@@ -1,6 +1,7 @@
 package openclassroom.p6.paymybuddy.service;
 
 import lombok.RequiredArgsConstructor;
+import openclassroom.p6.paymybuddy.constante.Messages;
 import openclassroom.p6.paymybuddy.domain.Transaction;
 import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.TransactionRequest;
@@ -10,10 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Service
@@ -80,5 +84,19 @@ public class TransactionService {
             logger.info("{} - Found {} recent transactions for email {}", LOG_ID, recentTransactions.size(), email);
             return recentTransactions;
         }
+    }
+
+    public BindingResult checkTransactionRequest(User user, TransactionRequest transactionRequest, BindingResult bindingResult) {
+        if (Objects.nonNull(transactionRequest.amount())) {
+            double amount = Math.floor(Double.parseDouble(transactionRequest.amount()) * 100) / 100;
+            if (amount >= user.getBalance()) {
+                bindingResult.addError(new FieldError(
+                        "transactionRequest",
+                        "amount",
+                        Messages.ACCOUNT_INSUFFICIENT_FUNDS
+                ));
+            }
+        }
+        return bindingResult;
     }
 }

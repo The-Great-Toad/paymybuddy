@@ -2,12 +2,12 @@ package openclassroom.p6.paymybuddy.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import openclassroom.p6.paymybuddy.constante.Messages;
 import openclassroom.p6.paymybuddy.domain.Transaction;
 import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.TransactionRequest;
 import openclassroom.p6.paymybuddy.service.ContactService;
 import openclassroom.p6.paymybuddy.service.TransactionService;
-import openclassroom.p6.paymybuddy.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -33,7 +33,6 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     private final ContactService contactService;
-    private final UserService userService;
 
 
     @GetMapping
@@ -45,16 +44,11 @@ public class TransactionController {
             @RequestParam(defaultValue = "10") int size)
     {
         logger.info("{} - keyword: {}, page number: {}, pageSize: {}", LOG_ID, keyword, page, size);
-//        User user = (User) authentication.getPrincipal();
-        User user = userService.getUser("test@test.com");
+        User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
-        model.addAttribute("user", user);
-        model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
+        setModelAttributes(model, keyword, page, size, user);
         model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("pageSize", size);
-        model.addAttribute("breadcrumb", "Transfer");
 
         try {
             Pageable paging = PageRequest.of(page - 1, size, Sort.by("date").descending());
@@ -71,7 +65,7 @@ public class TransactionController {
     }
 
     @PostMapping
-    public String transactionSave(
+    public String saveTransaction(
             Model model,
             Authentication authentication,
             @Valid TransactionRequest transactionRequest,
@@ -80,15 +74,10 @@ public class TransactionController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size)
     {
-//        User user = (User) authentication.getPrincipal();
-        User user = userService.getUser("test@test.com");
+        User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
-        model.addAttribute("user", user);
-        model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("pageSize", size);
-        model.addAttribute("breadcrumb", "Transfer");
+        setModelAttributes(model, keyword, page, size, user);
 
         try {
             Pageable paging = PageRequest.of(page - 1, size, Sort.by("date").descending());
@@ -96,7 +85,10 @@ public class TransactionController {
 
             logger.info("{} - transaction request: {}", LOG_ID, transactionRequest);
 
+            bindingResult = transactionService.checkTransactionRequest(user, transactionRequest, bindingResult);
+
             if (bindingResult.hasErrors()) {
+                bindingResult.getAllErrors().forEach(error -> logger.error(error.getDefaultMessage()));
                 pageTransactions = transactionService.getTransactions(keyword, paging, user);
                 model.addAttribute("transactions", pageTransactions.getContent());
                 model.addAttribute("totalItems", pageTransactions.getTotalElements());
@@ -110,7 +102,7 @@ public class TransactionController {
                 model.addAttribute("transactions", pageTransactions.getContent());
                 model.addAttribute("totalItems", pageTransactions.getTotalElements());
                 model.addAttribute("totalPages", pageTransactions.getTotalPages());
-                model.addAttribute("transactionSuccess", true);
+                model.addAttribute("success", Messages.TRANSFER_SUCCESS);
                 model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
             }
         }  catch (Exception e) {
@@ -118,5 +110,14 @@ public class TransactionController {
         }
 
         return "transaction";
+    }
+
+    private void setModelAttributes(Model model, String keyword, int page, int size, User user) {
+        model.addAttribute("user", user);
+        model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("breadcrumb", "Transfer");
     }
 }
