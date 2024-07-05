@@ -88,6 +88,19 @@ class ContactControllerTest {
     }
 
     @Test
+    void addContactTest_failureEmailNotFound() throws Exception {
+        String newContact = "toto@mail.com";
+
+        mockMvc.perform(post("/contacts")
+                        .with(user(user))
+                        .queryParam("contactRequest", newContact))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andExpect(view().name("contact"))
+                .andExpect(model().size(4))
+                .andExpect(content().string(containsString("Contact not found...")));
+    }
+
+    @Test
     void removeContactTest_success() throws Exception {
         String newContact = "luc@mail.com";
 
