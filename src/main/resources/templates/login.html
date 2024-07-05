@@ -19,12 +19,14 @@
         <div class="inner-wrapper">
             <!--    ALERTS     -->
             <div>
-                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert" th:if="${registrationSuccess}">
+                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert"
+                     th:if="${registrationSuccess}" th:text="${registrationSuccess}">
                     Registration success message
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert" th:if="${param.logout}">
-                    You have been logged out.
+                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert"
+                     th:if="${logoutSuccess}" th:text="${logoutSuccess}">
+                    Logout message.
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert" th:if="${param.error}">

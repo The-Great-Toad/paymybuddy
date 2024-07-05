@@ -23,15 +23,15 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/css/**").permitAll()
-//                        .requestMatchers("/js/**").permitAll()
-//                        .requestMatchers("/register/**").permitAll()
-//                        .anyRequest().authenticated())
-//                .formLogin(login -> login
-//                        .loginPage("/login")
-//                        .permitAll()
-//                        .defaultSuccessUrl("/home", true))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/css/**").permitAll()
+                        .requestMatchers("/js/**").permitAll()
+                        .requestMatchers("/register/**").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .permitAll()
+                        .defaultSuccessUrl("/", true))
                 .build();
     }
 

@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/balance")
+@RequestMapping("/account")
 public class AccountController {
 
     private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
@@ -30,14 +30,14 @@ public class AccountController {
 
     @PostMapping("/withdraw")
     public String withdraw(
-            Authentication authentication,
             Model model,
             @Valid AmountRequest withdrawal,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes)
     {
         logger.info("{} - withdraw amountRequest: {}", LOG_ID, withdrawal);
-        User user = (User) authentication.getPrincipal();
+        User user = userService.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
         bindingResult = userService.validateWithdrawal(user.getBalance(), withdrawal.amount(), bindingResult);
 
@@ -59,6 +59,7 @@ public class AccountController {
     {
         logger.info("{} - deposit amountRequest: {}", LOG_ID, deposit);
         User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
         if (bindingResultHasErrors(model, bindingResult, user)) return "profile";
 

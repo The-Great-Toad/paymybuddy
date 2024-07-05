@@ -33,8 +33,8 @@ public class LoginController {
     // Home page
     @GetMapping({"/", "index.html"})
     public String home(Model model, Authentication authentication) {
-//        User user = (User) authentication.getPrincipal();
-        User user = userService.getUser("test@test.com");
+        User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
         model.addAttribute("user", user);
         model.addAttribute("breadcrumb", "");
@@ -51,14 +51,16 @@ public class LoginController {
     }
 
     // logout
-    @GetMapping("/logout")
+    @PostMapping("/user/logout")
     public String login(
             Model model,
+            RedirectAttributes redirectAttributes,
             Authentication authentication)
     {
         logger.info("{} - login out user: {}", LOG_ID, authentication.getName());
-        model.addAttribute("logout", true);
-        return "login";
+        userService.logoutUser();
+        redirectAttributes.addFlashAttribute("logoutSuccess", Messages.LOGOUT_SUCCESS);
+        return "redirect:/login";
     }
 
     // Registration

@@ -25,6 +25,7 @@ public class Messages {
     // Account
     public static final String ACCOUNT_INSUFFICIENT_FUNDS = "Insufficient funds";
     public static final String ACCOUNT_MIN_DEPOSIT = "Minimum amount of €10 for deposit/withdrawal";
+    public static final String AMOUNT_NOT_NULL = "Please enter a valid amount";
 
     // Success
     public static final String USER_INFO_SUCCESS = "You information have been updated!";
@@ -32,6 +33,7 @@ public class Messages {
     public static final String WITHDRAW_SUCCESS = "Your withdraw was successful";
     public static final String DEPOSIT_SUCCESS = "Your deposit was successful";
     public static final String REGISTRATION_SUCCESS = "Your account has been created! Please login";
+    public static final String LOGOUT_SUCCESS = "You have been logged out";
 
     private Messages() {}
 }

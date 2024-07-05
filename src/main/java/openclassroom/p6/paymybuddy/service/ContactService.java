@@ -44,7 +44,7 @@ public class ContactService {
         Optional<Contact> contact = contactRepository.findByEmail(email);
 
         if (contact.isPresent()) {
-            logger.info("{} - Retrieved contact: {}", LOG_ID, contact.get());
+            logger.debug("{} - Retrieved contact: {}", LOG_ID, contact.get());
             return contact.get();
         }
 

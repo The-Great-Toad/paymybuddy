@@ -18,7 +18,7 @@ section.user-info div.header {
     justify-content: center;
     align-items: center;
     background-color: var(--color-primary);
-    color: white;
+    color: #fff;
     padding: 0.5rem 0 0.5rem 1rem;
     margin-bottom: 0.5rem;
     border-radius: 5px;
@@ -65,8 +65,9 @@ div.pwd-policy {
 }
 span.requirement-title {
     font-size: 1.5rem;
-    background-color: var(--color-primary);
-    color: white;
+    /*background-color: var(--color-primary);*/
+    background-color: #b98427;
+    color: #fff;
     text-align: center;
     padding: 0.5rem 0 0.5rem 1rem;
     margin-bottom: 1rem;

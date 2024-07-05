@@ -63,7 +63,6 @@ public class UserService {
 
     public User getPrincipal() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        // todo: use method
     }
 
     public BindingResult validateUserPwdRequest(UserPasswordRequest userPwdRequest, User user, BindingResult bindingResult) {
@@ -172,5 +171,9 @@ public class UserService {
         user.setBalance(balance + deposit);
         logger.info("{} - Account balance after deposit: ${}", LOG_ID, user.getBalance());
         userRepository.save(user);
+    }
+
+    public void logoutUser() {
+        SecurityContextHolder.getContext().setAuthentication(null);
     }
 }

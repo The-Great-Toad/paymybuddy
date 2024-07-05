@@ -9,21 +9,23 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav justify-content-end">
-                    <li class="nav-item">
+                    <li class="nav-item header">
 <!--                        active" aria-current="page"-->
                         <a id="home" class="nav-link" href="/"  th:classappend="${#strings.isEmpty(currentPage)}? 'current-page'">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item header">
                         <a id="transactions" class="nav-link" href="/transactions" th:classappend="${currentPage == 'Transfer'}? 'current-page'">Transfer</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item header">
                         <a id="profile" class="nav-link" href="/profile" th:classappend="${currentPage == 'Profile'}? 'current-page'">Profile</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item header">
                         <a id="contacts" class="nav-link" href="/contacts" th:classappend="${currentPage == 'Contact'}? 'current-page'">Contact</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Log off</a>
+                    <li class="nav-item header logout">
+                        <form action="#" method="post" th:action="@{/user/logout}">
+                            <button type="submit" class="btn-transparent">Log off</button>
+                        </form>
                     </li>
                 </ul>
             </div>

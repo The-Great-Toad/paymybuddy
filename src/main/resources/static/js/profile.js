@@ -7,11 +7,11 @@ function submitUserPwd() {
 }
 
 function submitDeposit() {
-    document.forms["deposit-withdraw-form"].action = "/accounts/deposit";
+    document.forms["deposit-withdraw-form"].action = "/account/deposit";
     document.forms["deposit-withdraw-form"].submit();
 }
 function submitWithdraw() {
-    document.forms["deposit-withdraw-form"].action = "/accounts/withdraw";
+    document.forms["deposit-withdraw-form"].action = "/account/withdraw";
     document.forms["deposit-withdraw-form"].submit();
 }
 

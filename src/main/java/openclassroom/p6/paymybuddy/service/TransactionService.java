@@ -66,7 +66,7 @@ public class TransactionService {
     }
 
     public Transaction saveTransaction(Transaction transaction) {
-        logger.info("{} - Saving transaction {}", LOG_ID, transaction);
+        logger.debug("{} - Saving transaction {}", LOG_ID, transaction);
         return transactionRepository. save(transaction);
     }
 

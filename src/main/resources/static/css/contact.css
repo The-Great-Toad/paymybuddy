@@ -1,6 +1,6 @@
 @import "styles.css";
 
-form {
+form#contact {
     width: 100%;
     height: fit-content;
     padding: 2rem;

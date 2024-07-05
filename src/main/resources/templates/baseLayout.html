@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:fragment="layout (title, links, scripts, content, currentPage)">
+      th:fragment="layout (title, links, scripts, content, page)">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport"
@@ -21,14 +21,13 @@
   <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/breadcrumb.css}">
   <th:block th:replace="${links}"/>
   <!-- JS -->
-  <script th:src="@{/js/header.js}" defer></script>
   <!-- Other JS -->
   <th:block th:replace="${scripts}"/>
 </head>
 <body>
 
 <header th:replace="~{/fragments/header}"></header>
-<nav th:replace="~{/fragments/breadcrumb ::breadcrumb (currentPage=${currentPage})}"></nav>
+<nav th:replace="~{/fragments/breadcrumb ::breadcrumb (currentPage=${page})}"></nav>
 <main>
   <div class="container">
 

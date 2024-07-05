@@ -21,7 +21,7 @@
             <h4>My Information</h4>
         </div>
 
-        <!-- CONTENT -->
+        <!-- CONTENT USER INFOS-->
         <div class="content col-md-6">
             <!-- EMAIL -->
             <div class="email">
@@ -61,7 +61,7 @@
             <h4>My Account</h4>
         </div>
 
-        <!-- CONTENT -->
+        <!-- CONTENT ACCOUNT-->
         <div class="content col-md-6">
             <!-- USER ACCOUNT BALANCE -->
             <div class="balance">
@@ -78,7 +78,6 @@
                     <span class="input-group-text">$</span>
                     <input type="number" class="form-control" id="amount" min="10" step="0.01"  aria-label="Amount"
                            th:field="*{amount}" th:classappend="${#fields.hasErrors('amount')}? 'is-invalid'" th:placeholder="'minimum amount of 10.00€'">
-                    <!--                    <div class="form-text" id="basic-addon4">Available balance: <span class="available_balance" th:text="'$'+${user.balance}"></span></div>-->
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount Error</div>
                 </div>
                 <!-- SUBMIT -->
@@ -100,7 +99,7 @@
             <h4>Change My Password</h4>
         </div>
 
-        <!-- CONTENT -->
+        <!-- CONTENT PASSWORD-->
         <div class="content col-md-6">
             <form action="#" method="post" id="user-pwd-form" th:action="@{/profile/password}" th:object="${userPasswordRequest}">
                 <!-- OLD-PASSWORD -->
