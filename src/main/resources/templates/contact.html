@@ -44,9 +44,8 @@
         <tbody>
         <tr class="tr-content" th:each="contact : ${contacts}">
             <td th:text="${contact}">email</td>
-<!--            <td><a th:href="@{/contacts/remove-contact(email=${contact})}" class="btn btn-danger">Delete</a></td>-->
             <td>
-                <a th:href="@{/contacts/remove-contact(email=${contact})}" class="btn btn-secondary"
+                <a th:href="@{/contacts/remove(email=${contact})}" class="btn btn-secondary"
                    title="remove contact" aria-label="remove contact">
                     <i class="fa-solid fa-user-xmark"></i>
                 </a>

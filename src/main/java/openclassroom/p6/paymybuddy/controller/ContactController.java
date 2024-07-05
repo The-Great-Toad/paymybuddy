@@ -2,6 +2,7 @@ package openclassroom.p6.paymybuddy.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import openclassroom.p6.paymybuddy.constante.Messages;
 import openclassroom.p6.paymybuddy.domain.Contact;
 import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.ContactRequest;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/contacts")
@@ -28,12 +30,12 @@ public class ContactController {
 
 
     @GetMapping
-    public String contactView(
+    public String getContactView(
             Model model,
             Authentication authentication)
     {
-//        User user = (User) authentication.getPrincipal();
-        User user = userService.getUser("test@test.com");
+        User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
         model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
         model.addAttribute("contactRequest", new ContactRequest(""));
@@ -44,14 +46,14 @@ public class ContactController {
     }
 
     @PostMapping
-    public String addContactToUserContactList(
+    public String addContact(
             Model model,
             Authentication authentication,
             @Valid ContactRequest contactRequest,
             BindingResult bindingResult)
     {
-//        User user = (User) authentication.getPrincipal();
-        User user = userService.getUser("test@test.com");
+        User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
         logger.info("{} - contact request: {}", LOG_ID, contactRequest);
 
@@ -68,16 +70,14 @@ public class ContactController {
         // Check if contact exists in DB
         Contact newContact = contactService.validateContactRequest(contactRequest);
         if (newContact != null) {
-            // Add contact to user's list
             user.getContacts().add(newContact);
             userService.save(user);
             logger.info("{} - Contact '{}' added to user contact list", LOG_ID, newContact.getEmail());
 
-            model.addAttribute("contactSuccess", true);
+            model.addAttribute("success", Messages.getContactAddedSuccess(newContact.getEmail()));
             model.addAttribute("contactRequest", new ContactRequest(""));
             model.addAttribute("contactUnknown", false);
         } else {
-            // Contact isn't found
             logger.error("{} - Contact '{}' not found", LOG_ID, contactRequest.email());
             model.addAttribute("contactUnknown", true);
         }
@@ -88,15 +88,16 @@ public class ContactController {
         return "contact";
     }
 
-    @GetMapping("/remove-contact")
-    public String contactDelete(
+    @GetMapping("/remove")
+    public String removeContact(
             Authentication authentication,
+            RedirectAttributes redirectAttributes,
             @RequestParam String email)
     {
         logger.info("{} - contact to remove: {}", LOG_ID, email);
 
-//        User user = (User) authentication.getPrincipal();
-        User user = userService.getUser("test@test.com");
+        User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
         // Retrieve contact to remove
         Contact contactToRemove = contactService.getContact(email);
@@ -105,6 +106,7 @@ public class ContactController {
         // Update user
         userService.save(user);
 
+        redirectAttributes.addFlashAttribute("success", Messages.getContactRemovalSuccess(email));
         return "redirect:/contacts";
     }
 

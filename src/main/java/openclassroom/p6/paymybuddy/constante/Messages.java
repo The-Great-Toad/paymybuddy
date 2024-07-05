@@ -34,6 +34,16 @@ public class Messages {
     public static final String DEPOSIT_SUCCESS = "Your deposit was successful";
     public static final String REGISTRATION_SUCCESS = "Your account has been created! Please login";
     public static final String LOGOUT_SUCCESS = "You have been logged out";
+    public static final String CONTACT_REMOVAL_SUCCESS = "%s removed from your list of contacts";
+    public static final String CONTACT_ADDED_SUCCESS = "%s added to your list of contacts";
 
     private Messages() {}
+
+    public static String getContactRemovalSuccess(String contactName) {
+        return String.format(CONTACT_REMOVAL_SUCCESS, contactName);
+    }
+
+    public static String getContactAddedSuccess(String contactName) {
+        return String.format(CONTACT_ADDED_SUCCESS, contactName);
+    }
 }
