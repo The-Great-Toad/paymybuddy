@@ -30,9 +30,10 @@ public class LoginController {
     private final TransactionService transactionService;
     private final ContactService contactService;
 
-    // Home page
+    /* HOME */
+
     @GetMapping({"/", "index.html"})
-    public String home(Model model, Authentication authentication) {
+    public String getHome(Model model, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
 //        User user = userService.getUser("test@test.com");
 
@@ -44,18 +45,15 @@ public class LoginController {
         return "index";
     }
 
-    // Login form
+    /* LOGIN & LOGOUT */
+
     @GetMapping("/login")
-    public String showLoginForm() {
+    public String getLoginForm() {
         return "login";
     }
 
-    // logout
     @PostMapping("/user/logout")
-    public String login(
-            Model model,
-            RedirectAttributes redirectAttributes,
-            Authentication authentication)
+    public String logout(RedirectAttributes redirectAttributes, Authentication authentication)
     {
         logger.info("{} - login out user: {}", LOG_ID, authentication.getName());
         userService.logoutUser();
@@ -63,9 +61,10 @@ public class LoginController {
         return "redirect:/login";
     }
 
-    // Registration
+    /* REGISTRATION */
+
     @GetMapping("/register")
-    public String showRegisterationForm(Model model)
+    public String getRegistrationForm(Model model)
     {
         UserRequest userRequest = new UserRequest("","","","");
         model.addAttribute("userRequest", userRequest);
@@ -73,7 +72,7 @@ public class LoginController {
     }
 
     @PostMapping("/register/save")
-    public String registration(
+    public String register(
             Model model,
             @Valid UserRequest userRequest,
             BindingResult bindingResult,

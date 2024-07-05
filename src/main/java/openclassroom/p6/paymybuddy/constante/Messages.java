@@ -2,12 +2,9 @@ package openclassroom.p6.paymybuddy.constante;
 
 public class Messages {
 
-    // Login Error
-    public static final String LOGIN_ERROR = "Wrong user or password";
-
     // Validation
     public static final String ALPHA_CHAR_ONLY = "Please enter alphabetic characters";
-    public static final String REQUIRED = "Please enter a valid email";
+    public static final String REQUIRED = "This field is required";
 
     // Email
     public static final String EMAIL_ALREADY_USED = "An account for that email already exists";

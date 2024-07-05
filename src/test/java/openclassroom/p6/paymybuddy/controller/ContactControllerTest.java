@@ -1,6 +1,5 @@
 package openclassroom.p6.paymybuddy.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import openclassroom.p6.paymybuddy.constante.Messages;
 import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.ContactRequest;
@@ -26,9 +25,6 @@ class ContactControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
 
     @Autowired
     private UserService userService;
