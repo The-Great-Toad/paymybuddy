@@ -78,7 +78,7 @@ class ContactControllerTest {
     void addContactTest_failureInvalidEmail() throws Exception {
         String newContact = "toto";
 
-        mockMvc.perform(get("/contacts")
+        mockMvc.perform(post("/contacts")
                         .with(user(user))
                         .queryParam("contactRequest", newContact))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
