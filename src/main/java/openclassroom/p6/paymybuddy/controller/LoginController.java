@@ -38,7 +38,7 @@ public class LoginController {
 //        User user = userService.getUser("test@test.com");
 
         model.addAttribute("user", user);
-        model.addAttribute("breadcrumb", "");
+        model.addAttribute("breadcrumb", "Home");
         model.addAttribute("recentTransactions", transactionService.getRecentTransactions(user.getEmail()));
         model.addAttribute("recentContacts", contactService.getRecentContacts(user.getEmail()));
 

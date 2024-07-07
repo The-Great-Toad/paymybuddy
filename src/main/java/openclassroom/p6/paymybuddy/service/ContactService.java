@@ -42,7 +42,12 @@ public class ContactService {
 
     public List<Contact> getRecentContacts(String email) {
         List<Contact> contacts = contactRepository.findAllContactByUserEmail(email);
-        return List.copyOf(contacts.subList(contacts.size() - 2, contacts.size()));
+        logger.info("{} - Retrieved {} contacts for user: {}", LOG_ID, contacts.size(), email);
+        if (contacts.size() <= 2) {
+            return contacts;
+        } else {
+            return List.copyOf(contacts.subList(contacts.size() - 2, contacts.size()));
+        }
     }
 
     public Contact getContact(String email) {

@@ -26,8 +26,10 @@
 </head>
 <body>
 
-<header th:replace="~{/fragments/header}"></header>
+<header th:replace="~{/fragments/header ::header (currentPage=${page})}"></header>
+
 <nav th:replace="~{/fragments/breadcrumb ::breadcrumb (currentPage=${page})}"></nav>
+
 <main>
   <div class="container">
 

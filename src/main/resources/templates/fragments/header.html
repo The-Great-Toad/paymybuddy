@@ -1,4 +1,4 @@
-<header>
+<header th:fragment="header (currentPage)">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">
@@ -10,8 +10,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav justify-content-end">
                     <li class="nav-item header">
-<!--                        active" aria-current="page"-->
-                        <a id="home" class="nav-link" href="/"  th:classappend="${#strings.isEmpty(currentPage)}? 'current-page'">Home</a>
+                        <a id="home" class="nav-link" href="/"  th:classappend="${#strings.equals(currentPage, 'Home')}? 'current-page'">Home</a>
                     </li>
                     <li class="nav-item header">
                         <a id="transactions" class="nav-link" href="/transactions" th:classappend="${currentPage == 'Transfer'}? 'current-page'">Transfer</a>
