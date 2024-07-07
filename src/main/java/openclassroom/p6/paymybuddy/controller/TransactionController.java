@@ -52,7 +52,7 @@ public class TransactionController {
 
         try {
             Pageable paging = PageRequest.of(page - 1, size, Sort.by("date").descending());
-            Page<Transaction> pageTransactions = transactionService.getTransactions(keyword, paging, user);
+            Page<Transaction> pageTransactions = transactionService.getTransactions(keyword, paging, user.getEmail());
 
             model.addAttribute("transactions", pageTransactions.getContent());
             model.addAttribute("totalItems", pageTransactions.getTotalElements());
@@ -85,20 +85,24 @@ public class TransactionController {
 
             logger.info("{} - transaction request: {}", LOG_ID, transactionRequest);
 
-            bindingResult = transactionService.checkTransactionRequest(user, transactionRequest, bindingResult);
+            bindingResult = transactionService.verifyTransactionRequest(
+                    user.getBalance(),
+                    transactionRequest,
+                    bindingResult
+            );
 
             if (bindingResult.hasErrors()) {
                 bindingResult.getAllErrors().forEach(error -> logger.error(error.getDefaultMessage()));
-                pageTransactions = transactionService.getTransactions(keyword, paging, user);
+                pageTransactions = transactionService.getTransactions(keyword, paging, user.getEmail());
                 model.addAttribute("transactions", pageTransactions.getContent());
                 model.addAttribute("totalItems", pageTransactions.getTotalElements());
                 model.addAttribute("totalPages", pageTransactions.getTotalPages());
                 return "transaction";
             }
 
-            Transaction transaction = transactionService.saveTransactionRequest(user, transactionRequest);
+            Transaction transaction = transactionService.saveTransactionRequest(user.getEmail(), transactionRequest);
             if (Objects.nonNull(transaction.getId())) {
-                pageTransactions = transactionService.getTransactions(keyword, paging, user);
+                pageTransactions = transactionService.getTransactions(keyword, paging, user.getEmail());
                 model.addAttribute("transactions", pageTransactions.getContent());
                 model.addAttribute("totalItems", pageTransactions.getTotalElements());
                 model.addAttribute("totalPages", pageTransactions.getTotalPages());

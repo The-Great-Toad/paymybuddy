@@ -3,7 +3,6 @@ package openclassroom.p6.paymybuddy.service;
 import lombok.RequiredArgsConstructor;
 import openclassroom.p6.paymybuddy.constante.Messages;
 import openclassroom.p6.paymybuddy.domain.Transaction;
-import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.TransactionRequest;
 import openclassroom.p6.paymybuddy.repository.TransactionRepository;
 import org.slf4j.Logger;
@@ -30,48 +29,25 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
 
 
-    public Page<Transaction> getTransactions(String keyword, Pageable p, User user) {
-        String email = user.getEmail();
+    public Page<Transaction> getTransactions(String keyword, Pageable p, String userEmail) {
         Page<Transaction> transactions;
 
         if (keyword == null) {
-            logger.info("{} - Retrieving transactions for {}, no keyword", LOG_ID, user.getEmail());
+            logger.info("{} - Retrieving transactions for {}, no keyword", LOG_ID, userEmail);
             transactions = transactionRepository.findTransactionsBySenderEmailOrReceiverEmail(
-                    email,
-                    email,
+                    userEmail,
+                    userEmail,
                     p);
         } else {
-            logger.info("{} - Retrieving transactions for {}, with keyword {}", LOG_ID, user.getEmail(), keyword);
+            logger.info("{} - Retrieving transactions for {}, with keyword {}", LOG_ID, userEmail, keyword);
             transactions = transactionRepository.findTransactionsBySenderEmailOrReceiverEmailAndDescriptionIsContainingIgnoreCaseOrderByDateDesc(
-                    email,
-                    email,
+                    userEmail,
+                    userEmail,
                     keyword,
                     p);
         }
         logger.info("{} - Retrieved {} transactions at page {}", LOG_ID, transactions.getContent().size(), transactions.getNumber());
         return transactions;
-    }
-
-    public Transaction saveTransactionRequest(User user, TransactionRequest transactionRequest) {
-        double amount = Math.floor(Double.parseDouble(transactionRequest.amount()) * 100) / 100;
-        double fee = Math.floor((amount * Transaction.FEE_RATE) * 100) / 100;
-        Transaction transaction = Stream.of(transactionRequest)
-                .map(t -> Transaction.builder()
-                        .senderEmail(user.getEmail())
-                        .receiverEmail(t.receiver())
-                        .description(t.description())
-                        .amount(amount + fee)
-                        .fee(fee)
-                        .date(LocalDateTime.now())
-                        .build())
-                .toList()
-                .get(0);
-        return saveTransaction(transaction);
-    }
-
-    public Transaction saveTransaction(Transaction transaction) {
-        logger.debug("{} - Saving transaction {}", LOG_ID, transaction);
-        return transactionRepository. save(transaction);
     }
 
     public List<Transaction> getRecentTransactions(String email) {
@@ -86,10 +62,34 @@ public class TransactionService {
         }
     }
 
-    public BindingResult checkTransactionRequest(User user, TransactionRequest transactionRequest, BindingResult bindingResult) {
+    public Transaction saveTransactionRequest(String userEmail, TransactionRequest transactionRequest) {
+        double amount = Math.floor(Double.parseDouble(transactionRequest.amount()) * 100) / 100;
+        double fee = Math.floor((amount * Transaction.FEE_RATE) * 100) / 100;
+
+        Transaction transaction = Stream.of(transactionRequest)
+                .map(t -> Transaction.builder()
+                        .senderEmail(userEmail)
+                        .receiverEmail(t.receiver())
+                        .description(t.description())
+                        .amount(amount)
+                        .fee(fee)
+                        .date(LocalDateTime.now())
+                        .build())
+                .toList()
+                .get(0);
+
+        return saveTransaction(transaction);
+    }
+
+    public Transaction saveTransaction(Transaction transaction) {
+        logger.debug("{} - Saving transaction {}", LOG_ID, transaction);
+        return transactionRepository.save(transaction);
+    }
+
+    public BindingResult verifyTransactionRequest(Double userBalance, TransactionRequest transactionRequest, BindingResult bindingResult) {
         if (Objects.nonNull(transactionRequest.amount())) {
             double amount = Math.floor(Double.parseDouble(transactionRequest.amount()) * 100) / 100;
-            if (amount >= user.getBalance()) {
+            if (amount >= userBalance) {
                 bindingResult.addError(new FieldError(
                         "transactionRequest",
                         "amount",
