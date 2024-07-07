@@ -33,10 +33,10 @@ public class UserController {
 
 
     @GetMapping
-    public String profileView(Model model) {
+    public String getProfileView(Model model) {
 
-//        User user = userService.getPrincipal();
-        User user = userService.getUser("test@test.com");
+        User user = userService.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
         UserInfoRequest userInfoRequest = new UserInfoRequest(user.getLastname(), user.getFirstname());
         UserPasswordRequest userPasswordRequest = new UserPasswordRequest("","","");
@@ -61,10 +61,12 @@ public class UserController {
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes)
     {
-//        User user = (User) authentication.getPrincipal();
-        User user = userService.getUser("test@test.com");
+        User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
         logger.info("{} - UserInfoRequest: {}", LOG_ID, userInfoRequest);
+
+        bindingResult = userService.verifyUserInfoRequest(userInfoRequest, bindingResult);
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(error -> logger.error("{} - {}: {} - {}", LOG_ID, error.getObjectName(), error.getDefaultMessage(), error));
@@ -96,8 +98,8 @@ public class UserController {
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes)
     {
-//        User user = (User) authentication.getPrincipal();
-        User user = userService.getUser("test@test.com");
+        User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
         logger.info("{} - userPwdRequest: {}", LOG_ID, userPasswordRequest);
 

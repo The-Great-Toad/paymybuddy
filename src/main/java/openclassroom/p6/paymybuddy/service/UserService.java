@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -56,20 +57,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deleteUser(User user) {
-        userRepository.delete(user);
-        contactService.deleteContact(user.getEmail());
-    }
-
     public User getPrincipal() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public BindingResult validateUserPwdRequest(UserPasswordRequest userPwdRequest, User user, BindingResult bindingResult) {
-        Pattern passwordRegex = Pattern.compile(Regex.PASSWORD);
         String oldPassword = userPwdRequest.oldPassword();
         String newPassword = userPwdRequest.newPassword();
         String confirmPassword = userPwdRequest.confirmPassword();
+        Pattern passwordRegex = Pattern.compile(Regex.PASSWORD);
 
         if (StringUtils.isNotBlank(oldPassword) || StringUtils.isNotBlank(newPassword) || StringUtils.isNotBlank(confirmPassword)) {
 
@@ -175,5 +171,25 @@ public class UserService {
 
     public void logoutUser() {
         SecurityContextHolder.getContext().setAuthentication(null);
+    }
+
+    public BindingResult verifyUserInfoRequest(UserInfoRequest userInfoRequest, BindingResult bindingResult) {
+        String lastname = userInfoRequest.lastname();
+        String firstname = userInfoRequest.firstname();
+        Pattern test = Pattern.compile(Regex.NAME);
+
+        if (Objects.nonNull(lastname) && !test.matcher(lastname).matches()) {
+            bindingResult.addError(new FieldError(
+                    "userInfoRequest",
+                    "lastname",
+                    Messages.ALPHA_CHAR_ONLY));
+        }
+        if (Objects.nonNull(firstname) && !test.matcher(firstname).find()) {
+            bindingResult.addError(new FieldError(
+                    "userInfoRequest",
+                    "firstname",
+                    Messages.ALPHA_CHAR_ONLY));
+        }
+        return bindingResult;
     }
 }
