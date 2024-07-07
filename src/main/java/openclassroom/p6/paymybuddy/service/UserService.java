@@ -36,6 +36,11 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
     public Iterable<User> getUsers() {
         return userRepository.findAll();
     }
@@ -53,12 +58,86 @@ public class UserService {
         }
     }
 
-    public User save(User user) {
-        return userRepository.save(user);
-    }
-
     public User getPrincipal() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    public void logoutUser() {
+        SecurityContextHolder.getContext().setAuthentication(null);
+    }
+
+    public User registerNewUser(UserRequest userRequest) {
+        if (emailExits(userRequest.email())) {
+            logger.info("{} - User with email {} already exists", LOG_ID, userRequest.email());
+            return null;
+        }
+
+        // save new user email as contact
+        Contact registeredUserAsContact = contactService.saveContact(userRequest.email());
+        logger.info("{} - Contact created: {}", LOG_ID, registeredUserAsContact.getEmail());
+
+        // save new user
+        User registeredUser = userRepository.save(User.builder()
+                .lastname(userRequest.lastname())
+                .firstname(userRequest.firstname())
+                .email(userRequest.email())
+                .password(passwordEncoder.encode(userRequest.password()))
+                .balance(5000)
+                .role(User.Role.USER)
+                .build());
+        logger.info("{} - user registered: {}", LOG_ID, registeredUser.getEmail());
+
+        return registeredUser;
+    }
+
+    public boolean saveUserInfoRequest(UserInfoRequest userInfoRequest, User user) {
+        boolean isLastnameModified = !userInfoRequest.lastname().equals(user.getLastname());
+        boolean isFirstnameModified = !userInfoRequest.firstname().equals(user.getFirstname());
+
+        if (isLastnameModified) {
+            user.setLastname(userInfoRequest.lastname());
+        }
+        if (isFirstnameModified) {
+            user.setFirstname(userInfoRequest.firstname());
+        }
+        if (isLastnameModified || isFirstnameModified) {
+            userRepository.save(user);
+            logger.info("{} - User information updated", LOG_ID);
+            return true;
+        } else {
+            logger.info("{} - User information have not changed", LOG_ID);
+            return false;
+        }
+    }
+
+    public void saveUserPwdRequest(UserPasswordRequest userPwdRequest, User user) {
+        user.setPassword(passwordEncoder.encode(userPwdRequest.newPassword()));
+        userRepository.save(user);
+        logger.info("{} - User password updated", LOG_ID);
+    }
+
+    public void withdraw(User user, double withdrawal) {
+        double balance = user.getBalance();
+        logger.info("{} - Withdrawing: ${} from account balance: ${}", LOG_ID, withdrawal, balance);
+        user.setBalance(balance - withdrawal);
+        logger.info("{} - Account balance after withdraw: ${}", LOG_ID, user.getBalance());
+        userRepository.save(user);
+    }
+
+    public void deposit(User user, double deposit) {
+        double balance = user.getBalance();
+        logger.info("{} - Depositing: ${} to account balance: ${}", LOG_ID, deposit, balance);
+        user.setBalance(balance + deposit);
+        logger.info("{} - Account balance after deposit: ${}", LOG_ID, user.getBalance());
+        userRepository.save(user);
+    }
+
+    public BindingResult validateWithdrawal(double balance, double withdrawal, BindingResult bindingResult) {
+
+        if (withdrawal > balance) {
+            bindingResult.addError(new FieldError("amountRequest", "amount", Messages.ACCOUNT_INSUFFICIENT_FUNDS));
+        }
+        return bindingResult;
     }
 
     public BindingResult validateUserPwdRequest(UserPasswordRequest userPwdRequest, User user, BindingResult bindingResult) {
@@ -91,88 +170,6 @@ public class UserService {
         return bindingResult;
     }
 
-    public boolean saveUserInfoRequest(UserInfoRequest userInfoRequest, User user) {
-        boolean isLastnameModified = !userInfoRequest.lastname().equals(user.getLastname());
-        boolean isFirstnameModified = !userInfoRequest.firstname().equals(user.getFirstname());
-
-        if (isLastnameModified) {
-            user.setLastname(userInfoRequest.lastname());
-        }
-        if (isFirstnameModified) {
-            user.setFirstname(userInfoRequest.firstname());
-        }
-        if (isLastnameModified || isFirstnameModified) {
-            userRepository.save(user);
-            logger.info("{} - User information updated", LOG_ID);
-            return true;
-        } else {
-            logger.info("{} - User information have not changed", LOG_ID);
-            return false;
-        }
-    }
-
-    public void saveUserPwdRequest(UserPasswordRequest userPwdRequest, User user) {
-        user.setPassword(passwordEncoder.encode(userPwdRequest.newPassword()));
-        userRepository.save(user);
-        logger.info("{} - User password updated", LOG_ID);
-    }
-
-    public User registerNewUser(UserRequest userRequest) {
-        if (emailExits(userRequest.email())) {
-            logger.info("{} - User with email {} already exists", LOG_ID, userRequest.email());
-            return null;
-        }
-
-        // save new user email as contact
-        Contact registeredUserAsContact = contactService.saveContact(userRequest.email());
-        logger.info("{} - Contact created: {}", LOG_ID, registeredUserAsContact.getEmail());
-
-        // save new user
-        User registeredUser = userRepository.save(User.builder()
-                .lastname(userRequest.lastname())
-                .firstname(userRequest.firstname())
-                .email(userRequest.email())
-                .password(passwordEncoder.encode(userRequest.password()))
-                .balance(5000)
-                .role(User.Role.USER)
-                .build());
-        logger.info("{} - user registered: {}", LOG_ID, registeredUser.getEmail());
-
-        return registeredUser;
-    }
-
-    private boolean emailExits(String email) {
-        return userRepository.findByEmail(email).isPresent();
-    }
-
-    public BindingResult validateWithdrawal(double balance, double withdrawal, BindingResult bindingResult) {
-
-        if (withdrawal > balance) {
-            bindingResult.addError(new FieldError("amountRequest", "amount", Messages.ACCOUNT_INSUFFICIENT_FUNDS));
-        }
-        return bindingResult;
-    }
-
-    public void withdraw(User user, double withdrawal) {
-        double balance = user.getBalance();
-        logger.info("{} - Withdrawing: ${} from account balance: ${}", LOG_ID, withdrawal, balance);
-        user.setBalance(balance - withdrawal);
-        logger.info("{} - Account balance after withdraw: ${}", LOG_ID, user.getBalance());
-        userRepository.save(user);
-    }
-
-    public void deposit(User user, double deposit) {
-        double balance = user.getBalance();
-        logger.info("{} - Depositing: ${} to account balance: ${}", LOG_ID, deposit, balance);
-        user.setBalance(balance + deposit);
-        logger.info("{} - Account balance after deposit: ${}", LOG_ID, user.getBalance());
-        userRepository.save(user);
-    }
-
-    public void logoutUser() {
-        SecurityContextHolder.getContext().setAuthentication(null);
-    }
-
     public BindingResult verifyUserInfoRequest(UserInfoRequest userInfoRequest, BindingResult bindingResult) {
         String lastname = userInfoRequest.lastname();
         String firstname = userInfoRequest.firstname();
@@ -191,5 +188,9 @@ public class UserService {
                     Messages.ALPHA_CHAR_ONLY));
         }
         return bindingResult;
+    }
+
+    private boolean emailExits(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 }
