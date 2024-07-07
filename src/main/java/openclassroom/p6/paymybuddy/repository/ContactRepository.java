@@ -17,6 +17,4 @@ public interface ContactRepository extends JpaRepository<Contact, Integer> {
     @Query(value = Queries.GET_USER_CONTACTS, nativeQuery = true)
     List<Contact> findAllContactByUserEmail(String userEmail);
 
-    void deleteContactByEmail(String email);
-
 }

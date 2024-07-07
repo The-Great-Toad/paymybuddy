@@ -37,7 +37,7 @@ public class ContactController {
         User user = (User) authentication.getPrincipal();
 //        User user = userService.getUser("test@test.com");
 
-        model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
+        model.addAttribute("contacts", contactService.getUserContacts(user.getEmail()));
         model.addAttribute("contactRequest", new ContactRequest(""));
         model.addAttribute("contactUnknown", false);
         model.addAttribute("breadcrumb", "Contact");
@@ -61,7 +61,7 @@ public class ContactController {
         if (bindingResult.hasErrors()) {
             logger.error("{} - bindingResult errors: {}", LOG_ID, bindingResult.hasFieldErrors("email"));
 
-            model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
+            model.addAttribute("contacts", contactService.getUserContacts(user.getEmail()));
             model.addAttribute("breadcrumb", "Contact");
 
             return "contact";
@@ -82,7 +82,7 @@ public class ContactController {
             model.addAttribute("contactUnknown", true);
         }
 
-        model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
+        model.addAttribute("contacts", contactService.getUserContacts(user.getEmail()));
         model.addAttribute("breadcrumb", "Contact");
 
         return "contact";

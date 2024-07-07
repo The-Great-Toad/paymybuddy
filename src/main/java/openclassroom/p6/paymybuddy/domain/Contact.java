@@ -21,7 +21,10 @@ import java.util.Objects;
 public class Contact {
 
     @Id
-//    @Column(unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(unique = true)
     private String email;
 
     @ManyToMany(

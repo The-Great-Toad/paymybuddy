@@ -114,7 +114,7 @@ public class TransactionController {
 
     private void setModelAttributes(Model model, String keyword, int page, int size, User user) {
         model.addAttribute("user", user);
-        model.addAttribute("contacts", contactService.getUserContactList(user.getEmail()));
+        model.addAttribute("contacts", contactService.getUserContacts(user.getEmail()));
         model.addAttribute("keyword", keyword);
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);

@@ -25,7 +25,7 @@ public class ContactService {
         return List.copyOf(contactRepository.findAll());
     }
 
-    public List<String> getUserContactList(String email) {
+    public List<String> getUserContacts(String email) {
         logger.debug("{} - Retrieving contacts for user: {}", LOG_ID, email);
         List<Contact> userContactList = contactRepository.findAllContactByUserEmail(email);
 
@@ -40,6 +40,11 @@ public class ContactService {
                 .toList();
     }
 
+    public List<Contact> getRecentContacts(String email) {
+        List<Contact> contacts = contactRepository.findAllContactByUserEmail(email);
+        return List.copyOf(contacts.subList(contacts.size() - 2, contacts.size()));
+    }
+
     public Contact getContact(String email) {
         Optional<Contact> contact = contactRepository.findByEmail(email);
 
@@ -52,15 +57,6 @@ public class ContactService {
         return null;
     }
 
-    public void deleteContact(String email) {
-        contactRepository.deleteContactByEmail(email);
-    }
-
-    public Contact validateContactRequest(ContactRequest contactRequest) {
-        Optional<Contact> optionalContact = contactRepository.findByEmail(contactRequest.email());
-        return optionalContact.orElse(null);
-    }
-
     public Contact saveContact(String email) {
         Contact newContact = Contact.builder()
                 .email(email)
@@ -69,8 +65,8 @@ public class ContactService {
         return contactRepository.save(newContact);
     }
 
-    public List<Contact> getRecentContacts(String email) {
-        return new ArrayList<>();
-        //todo
+    public Contact validateContactRequest(ContactRequest contactRequest) {
+        Optional<Contact> optionalContact = contactRepository.findByEmail(contactRequest.email());
+        return optionalContact.orElse(null);
     }
 }
