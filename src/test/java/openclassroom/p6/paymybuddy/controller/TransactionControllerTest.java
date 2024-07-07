@@ -85,7 +85,7 @@ class TransactionControllerTest {
                 .andExpect(model().size(10))
                 .andExpect(model().attribute("user", user))
                 .andExpect(model().attributeHasFieldErrorCode("transactionRequest", "amount", "Min"))
-                .andExpect(content().string(containsString("Invalid amount")));
+                .andExpect(content().string(containsString(Messages.ACCOUNT_MIN_DEPOSIT)));
     }
 
 }
