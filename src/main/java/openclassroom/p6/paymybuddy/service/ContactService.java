@@ -22,31 +22,52 @@ public class ContactService {
     private ContactRepository contactRepository;
 
     public List<Contact> getContacts() {
-        return List.copyOf(contactRepository.findAll());
+        List<Contact> contacts = new ArrayList<>();
+        try {
+            contacts = contactRepository.findAll();
+        } catch (Exception e) {
+            logger.error("{} - {}", LOG_ID, e.getMessage());
+        }
+        return contacts;
     }
 
     public List<String> getUserContacts(String email) {
         logger.debug("{} - Retrieving contacts for user: {}", LOG_ID, email);
-        List<Contact> userContactList = contactRepository.findAllContactByUserEmail(email);
+        List<Contact> userContactList;
+        try {
+            userContactList = contactRepository.findAllContactByUserEmail(email);
 
-        if (userContactList.isEmpty()) {
-            logger.info("{} - No contact found for user: {}", LOG_ID, email);
+            if (userContactList.isEmpty()) {
+                logger.info("{} - No contact found for user: {}", LOG_ID, email);
+                return new ArrayList<>();
+            }
+            logger.info("{} - Retrieved {} contact(s) for user: {}", LOG_ID, userContactList.size(), email);
+
+            return userContactList.stream()
+                    .map(Contact::getEmail)
+                    .toList();
+
+        } catch (Exception e) {
+            logger.error("{} - {}", LOG_ID, e.getMessage());
             return new ArrayList<>();
         }
-        logger.info("{} - Retrieved {} contact(s) for user: {}", LOG_ID, userContactList.size(), email);
-
-        return userContactList.stream()
-                .map(Contact::getEmail)
-                .toList();
     }
 
     public List<Contact> getRecentContacts(String email) {
-        List<Contact> contacts = contactRepository.findAllContactByUserEmail(email);
-        logger.info("{} - Retrieved {} contacts for user: {}", LOG_ID, contacts.size(), email);
-        if (contacts.size() <= 2) {
+        List<Contact> contacts = new ArrayList<>();
+
+        try {
+            contacts = contactRepository.findAllContactByUserEmail(email);
+            logger.info("{} - Retrieved {} contacts for user: {}", LOG_ID, contacts.size(), email);
+
+            if (contacts.size() <= 2) {
+                return contacts;
+            } else {
+                return List.copyOf(contacts.subList(contacts.size() - 2, contacts.size()));
+            }
+        } catch (Exception e) {
+            logger.error("{} - {}", LOG_ID, e.getMessage());
             return contacts;
-        } else {
-            return List.copyOf(contacts.subList(contacts.size() - 2, contacts.size()));
         }
     }
 
@@ -63,11 +84,19 @@ public class ContactService {
     }
 
     public Contact saveContact(String email) {
+        Contact savedContact = null;
         Contact newContact = Contact.builder()
                 .email(email)
                 .build();
 
-        return contactRepository.save(newContact);
+        try {
+            savedContact = contactRepository.save(newContact);
+            logger.debug("{} - Saved contact: {}", LOG_ID, savedContact);
+        } catch (Exception e) {
+            logger.error("{} - {}", LOG_ID, e.getMessage());
+        }
+
+        return savedContact;
     }
 
     public Contact validateContactRequest(ContactRequest contactRequest) {

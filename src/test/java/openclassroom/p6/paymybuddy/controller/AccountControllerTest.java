@@ -2,8 +2,6 @@ package openclassroom.p6.paymybuddy.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import openclassroom.p6.paymybuddy.constante.Messages;
-import openclassroom.p6.paymybuddy.domain.User;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,27 +15,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AccountControllerTest {
+class AccountControllerTest extends ControllerUtils {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
-
-    private static User user;
-
-    @BeforeAll
-    static void setUp() {
-        user = User.builder()
-                .firstname("test")
-                .lastname("test")
-                .email("test@test.com")
-                .password("test")
-                .balance(2000)
-                .role(User.Role.USER)
-                .build();
-    }
 
     @Test
     void withdrawTest_success() throws Exception {

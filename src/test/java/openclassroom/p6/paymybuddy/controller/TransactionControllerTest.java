@@ -1,9 +1,6 @@
 package openclassroom.p6.paymybuddy.controller;
 
 import openclassroom.p6.paymybuddy.constante.Messages;
-import openclassroom.p6.paymybuddy.domain.User;
-import openclassroom.p6.paymybuddy.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,20 +18,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class TransactionControllerTest {
+class TransactionControllerTest extends ControllerUtils {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private UserService userService;
-
-    private User user;
-
-    @BeforeEach
-    void setUp() {
-        user = userService.getUser("test@test.com");
-    }
 
     @Test
     void getTransactionViewTest() throws Exception {

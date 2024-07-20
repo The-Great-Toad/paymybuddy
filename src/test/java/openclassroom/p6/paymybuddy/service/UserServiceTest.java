@@ -164,6 +164,8 @@ class UserServiceTest extends ServiceUtils {
                 .firstname("Bob")
                 .build();
 
+        when(userRepository.save(user)).thenReturn(user);
+
         boolean result = userService.saveUserInfoRequest(userInfoRequest, user);
 
         assertTrue(result);
@@ -301,22 +303,22 @@ class UserServiceTest extends ServiceUtils {
     }
 
     @Test
-    void verifyUserInfoRequestTest() {
+    void validateUserInfoRequestTest() {
         UserInfoRequest userInfoRequest = new UserInfoRequest("lastname", "firstname");
         BindingResult bindingResult = new BeanPropertyBindingResult(userInfoRequest, "userInfoRequest");
 
-        BindingResult result = userService.verifyUserInfoRequest(userInfoRequest, bindingResult);
+        BindingResult result = userService.validateUserInfoRequest(userInfoRequest, bindingResult);
 
         assertNotNull(result);
         assertFalse(result.hasErrors());
     }
 
     @Test
-    void verifyUserInfoRequestTest_InvalidChar() {
+    void validateUserInfoRequestTest_InvalidChar() {
         UserInfoRequest userInfoRequest = new UserInfoRequest("123", "456");
         BindingResult bindingResult = new BeanPropertyBindingResult(userInfoRequest, "userInfoRequest");
 
-        BindingResult result = userService.verifyUserInfoRequest(userInfoRequest, bindingResult);
+        BindingResult result = userService.validateUserInfoRequest(userInfoRequest, bindingResult);
 
         assertNotNull(result);
         assertTrue(result.hasErrors());

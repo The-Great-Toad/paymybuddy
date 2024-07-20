@@ -26,7 +26,6 @@ public class User implements UserDetails {
     public enum Role { USER, ADMIN }
 
     @Id
-//    @Column(unique = true)
     private String email;
 
     private String firstname;

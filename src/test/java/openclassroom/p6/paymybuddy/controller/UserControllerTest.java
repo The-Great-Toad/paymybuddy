@@ -1,14 +1,10 @@
 package openclassroom.p6.paymybuddy.controller;
 
 import openclassroom.p6.paymybuddy.constante.Messages;
-import openclassroom.p6.paymybuddy.domain.User;
-import openclassroom.p6.paymybuddy.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
@@ -20,21 +16,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class UserControllerTest {
+class UserControllerTest extends ControllerUtils {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private UserService userService;
-
-    private User user;
-
-    @BeforeEach
-    void setUp() {
-        user = userService.getUser("test@test.com");
-    }
     
     @Test
     void getProfileViewTest() throws Exception {
@@ -107,7 +92,7 @@ class UserControllerTest {
 
     @Test
     void saveUserPasswordTest_success() throws Exception {
-        String oldPassword = "test";
+        String oldPassword = "password";
         String newPassword = "Password!123";
         String confirmPassword = "Password!123";
 

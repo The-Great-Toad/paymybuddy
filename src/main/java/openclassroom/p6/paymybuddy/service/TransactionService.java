@@ -34,31 +34,50 @@ public class TransactionService {
 
         if (keyword == null) {
             logger.info("{} - Retrieving transactions for {}, no keyword", LOG_ID, userEmail);
-            transactions = transactionRepository.findTransactionsBySenderEmailOrReceiverEmail(
-                    userEmail,
-                    userEmail,
-                    p);
+
+            try {
+                transactions = transactionRepository.findTransactionsBySenderEmailOrReceiverEmail(
+                        userEmail,
+                        userEmail,
+                        p);
+            } catch (Exception e) {
+                logger.error("{} - {}", LOG_ID, e.getMessage());
+                return Page.empty();
+            }
         } else {
             logger.info("{} - Retrieving transactions for {}, with keyword {}", LOG_ID, userEmail, keyword);
-            transactions = transactionRepository.findTransactionsBySenderEmailOrReceiverEmailAndDescriptionIsContainingIgnoreCaseOrderByDateDesc(
-                    userEmail,
-                    userEmail,
-                    keyword,
-                    p);
+
+            try {
+                transactions = transactionRepository.findTransactionsBySenderEmailOrReceiverEmailAndDescriptionIsContainingIgnoreCaseOrderByDateDesc(
+                        userEmail,
+                        userEmail,
+                        keyword,
+                        p);
+            } catch (Exception e) {
+                logger.error("{} - {}", LOG_ID, e.getMessage());
+                return Page.empty();
+            }
         }
         logger.info("{} - Retrieved {} transactions at page {}", LOG_ID, transactions.getContent().size(), transactions.getNumber());
         return transactions;
     }
 
     public List<Transaction> getRecentTransactions(String email) {
-        List<Transaction> recentTransactions = transactionRepository.findRecentTransactions(email);
+        List<Transaction> recentTransactions;
 
-        if (recentTransactions.isEmpty()) {
-            logger.info("{} - No recent transactions found for email {}", LOG_ID, email);
+        try {
+            recentTransactions = transactionRepository.findRecentTransactions(email);
+
+            if (recentTransactions.isEmpty()) {
+                logger.info("{} - No recent transactions found for email {}", LOG_ID, email);
+                return new ArrayList<>();
+            } else {
+                logger.info("{} - Found {} recent transactions for email {}", LOG_ID, recentTransactions.size(), email);
+                return recentTransactions;
+            }
+        } catch (Exception e) {
+            logger.error("{} - {}", LOG_ID, e.getMessage());
             return new ArrayList<>();
-        } else {
-            logger.info("{} - Found {} recent transactions for email {}", LOG_ID, recentTransactions.size(), email);
-            return recentTransactions;
         }
     }
 
@@ -83,7 +102,12 @@ public class TransactionService {
 
     public Transaction saveTransaction(Transaction transaction) {
         logger.debug("{} - Saving transaction {}", LOG_ID, transaction);
-        return transactionRepository.save(transaction);
+        try {
+            return transactionRepository.save(transaction);
+        } catch (Exception e) {
+            logger.error("{} - Failed to save transaction - {}", LOG_ID, e.getMessage());
+            return null;
+        }
     }
 
     public BindingResult verifyTransactionRequest(Double userBalance, TransactionRequest transactionRequest, BindingResult bindingResult) {

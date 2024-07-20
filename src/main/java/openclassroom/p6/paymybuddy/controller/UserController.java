@@ -66,7 +66,7 @@ public class UserController {
 
         logger.info("{} - UserInfoRequest: {}", LOG_ID, userInfoRequest);
 
-        bindingResult = userService.verifyUserInfoRequest(userInfoRequest, bindingResult);
+        bindingResult = userService.validateUserInfoRequest(userInfoRequest, bindingResult);
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(error -> logger.error("{} - {}: {} - {}", LOG_ID, error.getObjectName(), error.getDefaultMessage(), error));

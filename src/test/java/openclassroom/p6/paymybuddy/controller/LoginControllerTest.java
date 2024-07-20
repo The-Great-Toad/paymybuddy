@@ -1,9 +1,6 @@
 package openclassroom.p6.paymybuddy.controller;
 
 import openclassroom.p6.paymybuddy.constante.Messages;
-import openclassroom.p6.paymybuddy.domain.User;
-import openclassroom.p6.paymybuddy.service.UserService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,20 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class LoginControllerTest {
+class LoginControllerTest extends ControllerUtils {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private UserService userService;
-
-    private User user;
-
-    @BeforeEach
-    void setUp() {
-        user = userService.getUser("test@test.com");
-    }
 
     @Test
     void getHomeTest() throws Exception {
@@ -42,7 +29,7 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().size(4))
                 .andExpect(model().attribute("user", user))
-                .andExpect(model().attribute("breadcrumb", ""))
+                .andExpect(model().attribute("breadcrumb", "Home"))
                 .andExpect(model().attributeExists("recentTransactions"))
                 .andExpect(model().attributeExists("recentContacts"))
                 .andExpect(view().name("index"))
@@ -82,7 +69,7 @@ class LoginControllerTest {
         MultiValueMap<String, String> params = new HttpHeaders();
         params.add("lastname", "Sponge");
         params.add("firstname", "Bob");
-        params.add("email", "bob@mail.com");
+        params.add("email", "sponge.bob@mail.com");
         params.add("password", "Pa$$w0rd");
 
         mockMvc.perform(post("/register/save")
@@ -121,5 +108,22 @@ class LoginControllerTest {
                 .andExpect(model().size(2))
                 .andExpect(model().attributeExists("userRequest"))
                 .andExpect(model().attribute("emailUsed", Messages.EMAIL_ALREADY_USED));
+    }
+
+    @Test
+    void registerTest_failurePasswordPolicy() throws Exception {
+        MultiValueMap<String, String> params = new HttpHeaders();
+        params.add("lastname", "toto");
+        params.add("firstname", "toto");
+        params.add("email", "test@test.com");
+        params.add("password", "password");
+
+        mockMvc.perform(post("/register/save")
+                        .queryParams(params))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(view().name("register"))
+                .andExpect(model().size(1))
+                .andExpect(model().attributeExists("userRequest"))
+                .andExpect(model().attributeHasFieldErrorCode("userRequest", "password", "Pattern"));
     }
 }

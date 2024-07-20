@@ -23,13 +23,3 @@ VALUES
     ('jonathan@mail.com'),
     ('franck@mail.com'),
     ('luc@mail.com');
-
--- INSERT INTO user_contact (user_id, contact_id)
--- SELECT u.id, c.id
--- FROM users u
---     CROSS JOIN (
---     SELECT id
---     FROM contact
---     ORDER BY RANDOM()
---     LIMIT 5
---     ) c;
