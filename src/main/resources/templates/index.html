@@ -19,23 +19,26 @@
     </div>
 
     <!-- RECENT TRANSACTIONS SECTION -->
-    <h3 class="section-title">Latest Transactions</h3>
-    <div class="transactions-section">
-        <div class="transaction" th:each="transaction : ${recentTransactions}">
-            <p><strong>To :</strong> <span th:text="${transaction.receiverEmail}">email@example.com</span></p>
-            <p><strong>Amount :</strong> <span th:text="${#numbers.formatDecimal(transaction.amount, 0, 2)}">$0.00</span></p>
-            <p><strong>Date :</strong> <span th:text="${transaction.date}">01/01/2024</span></p>
+    <section th:if="${!#lists.isEmpty(recentTransactions)}">
+        <h3 class="section-title">Latest Transactions</h3>
+        <div class="transactions-section">
+            <div class="transaction" th:each="transaction : ${recentTransactions}">
+                <p><strong>To :</strong> <span th:text="${transaction.receiverEmail}">email@example.com</span></p>
+                <p><strong>Amount :</strong> <span th:text="${#numbers.formatDecimal(transaction.amount, 0, 2)}">$0.00</span></p>
+                <p><strong>Date :</strong> <span th:text="${transaction.date}">01/01/2024</span></p>
+            </div>
         </div>
-    </div>
+    </section>
 
 <!--     RECENT CONTACTS SECTION-->
-    <h3 class="section-title">Latest Connection</h3>
-    <div class="contacts-section">
-        <div class="contact" th:each="contact : ${recentContacts}">
-            <p><strong>Email :</strong> <span th:text="${contact.email}">email@example.com</span></p>
+    <section th:if="${#lists.isEmpty(recentContacts)}">
+        <h3 class="section-title">Latest Connection</h3>
+        <div class="contacts-section">
+            <div class="contact" th:each="contact : ${recentContacts}">
+                <p><strong>Email :</strong> <span th:text="${contact.email}">email@example.com</span></p>
+            </div>
         </div>
-    </div>
-
+    </section>
 </div>
 
 </body>

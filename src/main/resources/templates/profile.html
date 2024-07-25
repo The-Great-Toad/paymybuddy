@@ -17,7 +17,7 @@
     <section class="user-info">
         <!-- HEADER -->
         <div class="header">
-            <i class="fa-solid fa-user-large"></i>
+            <i class="fa-solid fa-user"></i>
             <h4>My Information</h4>
         </div>
 
@@ -68,7 +68,7 @@
                 <label for="balance" class="col-form-label">Your account balance:</label>
                 <div class="input-group">
                     <span class="input-group-text">$</span>
-                    <input type="text" id="balance" class="form-control" th:value="*{user.balance}" disabled>
+                    <input type="text" id="balance" class="form-control" th:value="*{#numbers.formatDecimal(user.balance, 0, 2)}" disabled>
                 </div>
             </div>
             <!-- Deposit / Withdraw -->

@@ -27,6 +27,7 @@ public class TransactionService {
     private final String LOG_ID = "[TransactionService]";
 
     private final TransactionRepository transactionRepository;
+    private final UserService userService;
 
 
     public Page<Transaction> getTransactions(String keyword, Pageable p, String userEmail) {
@@ -101,13 +102,23 @@ public class TransactionService {
     }
 
     public Transaction saveTransaction(Transaction transaction) {
+        /* Deduct transaction amount from sender balance */
+        userService.withdraw(userService.getUser(transaction.getSenderEmail()), transaction.getAmount());
+
+        /* Add transaction amount to receiver balance */
+        userService.deposit(userService.getUser(transaction.getReceiverEmail()), transaction.getAmount());
+
+        /* Save transaction */
         logger.debug("{} - Saving transaction {}", LOG_ID, transaction);
+        Transaction savedTransaction;
         try {
-            return transactionRepository.save(transaction);
+            savedTransaction = transactionRepository.save(transaction);
         } catch (Exception e) {
             logger.error("{} - Failed to save transaction - {}", LOG_ID, e.getMessage());
             return null;
         }
+
+        return savedTransaction;
     }
 
     public BindingResult verifyTransactionRequest(Double userBalance, TransactionRequest transactionRequest, BindingResult bindingResult) {
