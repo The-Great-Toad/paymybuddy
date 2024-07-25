@@ -1,0 +1,11 @@
+<div class="row g-1 mt-2 table-filter">
+    <div class="col-auto">
+        <label class="col-form-label search" for="keyword">Search:</label>
+    </div>
+    <div class="col-md-6">
+        <input class="form-control" id="keyword" type="text" name="keyword" th:value="${keyword}" placeholder="Enter keyword...">
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-secondary btn-clear" onclick="clearFilter()">Clear</a>
+    </div>
+</div>

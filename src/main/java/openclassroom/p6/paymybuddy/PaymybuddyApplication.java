@@ -6,7 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication()
 public class PaymybuddyApplication implements CommandLineRunner {
 
 	@Autowired
@@ -18,6 +18,6 @@ public class PaymybuddyApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-		initializer.initTransactionTable();
+		initializer.initTables();
 	}
 }

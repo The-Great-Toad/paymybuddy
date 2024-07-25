@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,11 +26,6 @@ public class User implements UserDetails {
     public enum Role { USER, ADMIN }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private Integer id;
-
-    @Column(unique = true)
     private String email;
 
     private String firstname;
@@ -38,73 +34,27 @@ public class User implements UserDetails {
 
     private String password;
 
+    private double balance;
+
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
-//    @OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST} )
-//    @JoinColumn(name = "account_id")
-    @OneToOne(mappedBy = "user", cascade = { CascadeType.MERGE, CascadeType.PERSIST})
-    private Account account;
-
-    @ManyToMany(
-            fetch = FetchType.EAGER,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            }
-    )
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "user_contact",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "contact_id")
     )
-    private List<Contact> contacts;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<Notification> notifications;
-
-
-    public User addEmail(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public User addFirstname(String firstname) {
-        this.firstname = firstname;
-        return this;
-    }
-
-    public User addLastname(String lastname) {
-        this.lastname = lastname;
-        return this;
-    }
-
-    public User addPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
-    public User addAccount(Account account) {
-        this.account = account;
-        return this;
-    }
+    private List<Contact> contacts = new ArrayList<>();
 
     public void addContact(Contact contact) {
         contacts.add(contact);
-//        contact.getContactUsers().add(this);
+        contact.addUser(this);
     }
 
     public void removeContact(Contact contact) {
         contacts.remove(contact);
-//        contact.getContactUsers().remove(this);
-    }
-
-    public void addNotification(Notification notification) {
-        notifications.add(notification);
-    }
-
-    public void removeNotification(Notification notification) {
-        notifications.remove(notification);
+        contact.removeUser(this);
     }
 
     @Override

@@ -1,12 +1,41 @@
 <!doctype html>
-<html th:replace="~{baseLayout :: layout(~{::title}, ~{::div.container})}">
+<html th:replace="~{baseLayout :: layout (~{::title}, ~{::link}, _, ~{::div.container}, ${breadcrumb})}">
 <head>
     <title>Home</title>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/homepage.css}">
 </head>
 <body>
 
 <div class="container">
-    <h1>Home page</h1>
+
+    <!-- HERO SECTION -->
+    <div class="hero-section">
+        <h1>Welcome, <span th:text="${user.firstname}">Utilisateur</span>!</h1>
+        <p>Current account balance: $<strong th:text="${#numbers.formatDecimal(user.balance, 0, 2)}">0.00</strong></p>
+        <div class="quick-actions">
+            <a th:href="@{/transactions}" class="btn btn-primary">Make a transfer</a>
+            <a th:href="@{/contacts}" class="btn btn-secondary">Add a connection</a>
+        </div>
+    </div>
+
+    <!-- RECENT TRANSACTIONS SECTION -->
+    <h3 class="section-title">Latest Transactions</h3>
+    <div class="transactions-section">
+        <div class="transaction" th:each="transaction : ${recentTransactions}">
+            <p><strong>To :</strong> <span th:text="${transaction.receiverEmail}">email@example.com</span></p>
+            <p><strong>Amount :</strong> <span th:text="${#numbers.formatDecimal(transaction.amount, 0, 2)}">$0.00</span></p>
+            <p><strong>Date :</strong> <span th:text="${transaction.date}">01/01/2024</span></p>
+        </div>
+    </div>
+
+<!--     RECENT CONTACTS SECTION-->
+    <h3 class="section-title">Latest Connection</h3>
+    <div class="contacts-section">
+        <div class="contact" th:each="contact : ${recentContacts}">
+            <p><strong>Email :</strong> <span th:text="${contact.email}">email@example.com</span></p>
+        </div>
+    </div>
+
 </div>
 
 </body>

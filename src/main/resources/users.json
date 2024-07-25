@@ -1,0 +1,12 @@
+[
+  { "email": "test@test.com", "firstname": "test", "lastname": "test", "password": "test"},
+  { "email": "clara@mail.com", "firstname": "Clara", "lastname": "Kent", "password": "password"},
+  { "email": "patrick@mail.com", "firstname": "Patrick", "lastname": "Dupond", "password": "password"},
+  { "email": "david@mail.com", "firstname": "David", "lastname": "Todd", "password": "password"},
+  { "email": "john@mail.com", "firstname": "John", "lastname": "Smith", "password": "password"},
+  { "email": "erick@mail.com", "firstname": "Erick", "lastname": "Parse", "password": "password"},
+  { "email": "maxime@mail.com", "firstname": "Maxime", "lastname": "Bond", "password": "password"},
+  { "email": "jonathan@mail.com", "firstname": "Jonathan", "lastname": "Port", "password": "password"},
+  { "email": "franck@mail.com", "firstname": "Franck", "lastname": "Lucas", "password": "password"},
+  { "email": "luc@mail.com", "firstname": "Luc", "lastname": "Valet", "password": "password"}
+]

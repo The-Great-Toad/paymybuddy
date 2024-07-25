@@ -2,7 +2,9 @@ package openclassroom.p6.paymybuddy.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import openclassroom.p6.paymybuddy.constante.Messages;
 import openclassroom.p6.paymybuddy.domain.Transaction;
+import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.TransactionRequest;
 import openclassroom.p6.paymybuddy.service.ContactService;
 import openclassroom.p6.paymybuddy.service.TransactionService;
@@ -33,40 +35,37 @@ public class TransactionController {
     private final ContactService contactService;
 
 
-
-    @GetMapping()
-    public String transferView(
+    @GetMapping
+    public String getTransactionView(
             Model model,
             Authentication authentication,
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        logger.info("{} - keyword: {}", LOG_ID, keyword);
-        logger.info("{} - page number: {}", LOG_ID, page);
-        logger.info("{} - pageSize: {}", LOG_ID, size);
+            @RequestParam(defaultValue = "10") int size)
+    {
+        logger.info("{} - keyword: {}, page number: {}, pageSize: {}", LOG_ID, keyword, page, size);
+        User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
+
+        setModelAttributes(model, keyword, page, size, user);
+        model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
 
         try {
             Pageable paging = PageRequest.of(page - 1, size, Sort.by("date").descending());
-            Page<Transaction> pageTransactions = transactionService.getTransactions(keyword, paging);
+            Page<Transaction> pageTransactions = transactionService.getTransactions(keyword, paging, user.getEmail());
 
             model.addAttribute("transactions", pageTransactions.getContent());
-            model.addAttribute("contacts", contactService.getContacts());
-//            model.addAttribute("transactionSuccess", false);
-            model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
-            model.addAttribute("keyword", keyword);
-            model.addAttribute("currentPage", page);
             model.addAttribute("totalItems", pageTransactions.getTotalElements());
             model.addAttribute("totalPages", pageTransactions.getTotalPages());
-            model.addAttribute("pageSize", size);
         } catch (Exception e) {
             model.addAttribute("exceptionMessage", e.getMessage());
         }
 
-        return "transfer";
+        return "transaction";
     }
 
     @PostMapping
-    public String save(
+    public String saveTransaction(
             Model model,
             Authentication authentication,
             @Valid TransactionRequest transactionRequest,
@@ -75,32 +74,54 @@ public class TransactionController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size)
     {
-        logger.info("{} - transaction request: {}", LOG_ID, transactionRequest);
-        if (bindingResult.hasErrors()) {
-            return "transfer";
-        }
+        User user = (User) authentication.getPrincipal();
+//        User user = userService.getUser("test@test.com");
 
-        Transaction transaction = transactionService.saveTransactionRequest(authentication, transactionRequest);
-        if (Objects.nonNull(transaction.getId())) {
-            model.addAttribute("transactionSuccess", true);
-        }
+        setModelAttributes(model, keyword, page, size, user);
 
         try {
             Pageable paging = PageRequest.of(page - 1, size, Sort.by("date").descending());
-            Page<Transaction> pageTransactions = transactionService.getTransactions(keyword, paging);
+            Page<Transaction> pageTransactions;
 
-            model.addAttribute("transactions", pageTransactions.getContent());
-            model.addAttribute("contacts", contactService.getContacts());
-            model.addAttribute("keyword", keyword);
-            model.addAttribute("currentPage", page);
-            model.addAttribute("totalItems", pageTransactions.getTotalElements());
-            model.addAttribute("totalPages", pageTransactions.getTotalPages());
-            model.addAttribute("pageSize", size);
-            model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
+            logger.info("{} - transaction request: {}", LOG_ID, transactionRequest);
+
+            bindingResult = transactionService.verifyTransactionRequest(
+                    user.getBalance(),
+                    transactionRequest,
+                    bindingResult
+            );
+
+            if (bindingResult.hasErrors()) {
+                bindingResult.getAllErrors().forEach(error -> logger.error(error.getDefaultMessage()));
+                pageTransactions = transactionService.getTransactions(keyword, paging, user.getEmail());
+                model.addAttribute("transactions", pageTransactions.getContent());
+                model.addAttribute("totalItems", pageTransactions.getTotalElements());
+                model.addAttribute("totalPages", pageTransactions.getTotalPages());
+                return "transaction";
+            }
+
+            Transaction transaction = transactionService.saveTransactionRequest(user.getEmail(), transactionRequest);
+            if (Objects.nonNull(transaction.getId())) {
+                pageTransactions = transactionService.getTransactions(keyword, paging, user.getEmail());
+                model.addAttribute("transactions", pageTransactions.getContent());
+                model.addAttribute("totalItems", pageTransactions.getTotalElements());
+                model.addAttribute("totalPages", pageTransactions.getTotalPages());
+                model.addAttribute("success", Messages.TRANSFER_SUCCESS);
+                model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
+            }
         }  catch (Exception e) {
             model.addAttribute("exceptionMessage", e.getMessage());
         }
 
-        return "transfer";
+        return "transaction";
+    }
+
+    private void setModelAttributes(Model model, String keyword, int page, int size, User user) {
+        model.addAttribute("user", user);
+        model.addAttribute("contacts", contactService.getUserContacts(user.getEmail()));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("breadcrumb", "Transfer");
     }
 }

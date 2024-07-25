@@ -1,35 +1,34 @@
 <!doctype html>
-<html th:replace="~{baseLayout :: layout(~{::title}, ~{::div.container})}">
+<html th:replace="~{baseLayout ::layout (~{::title}, ~{::link}, ~{::script}, ~{::section}, ${breadcrumb})}">
 <head>
     <title>Transfer</title>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/transaction.css}">
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/table-filter.css}">
+    <script th:src="@{/js/transaction.js}" defer></script>
+    <script th:src="@{/js/table-filter.js}" defer></script>
 </head>
 <body>
 
-<div class="container">
-
-    <!--    ALERTS     -->
-    <div class="alert alert-success alert-dismissible fade show mt-2" role="alert" th:if="${transactionSuccess}">
-        Transaction saved
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+<section class="container">
 
     <!--    TRANSACTIONS FORM     -->
     <div class="trans-form-container">
+
         <!--    FORM HEADER     -->
         <div class="trans-form-header">
             <h3>Send Money</h3>
-            <button type="button" class="btn btn-secondary">Add Connection</button>
+            <a th:href="@{/contacts}" class="btn btn-secondary">Add Connection</a>
         </div>
+
         <!--    FORM     -->
-        <div class="trans-form-inner-container">
-            <form action="#" class="row g-2 trans-form" method="post"
+        <form action="#" class="row g-2" method="post" id="transaction"
                   th:action="@{/transactions}" th:object="${transactionRequest}">
                 <!--    CONTACTS     -->
                 <div class="col-md-6 col-contacts">
                     <select class="form-select form-select-sm" th:field="*{receiver}" aria-label="select-contact"
                             th:classappend="${#fields.hasErrors('receiver')}? 'is-invalid'">
-                        <option value="" disabled selected>Select A Connection</option>
-                        <option th:each="contact : ${contacts}" th:text="${contact.email}" value="${contact.email}"></option>
+                        <option value="" selected disabled>Select A Connection</option>
+                        <option th:each="contact : ${contacts}" th:text="${contact}" th:value="${contact}"></option>
                     </select>
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('receiver')}" th:errors="*{receiver}">Receiver Error</div>
                 </div>
@@ -53,40 +52,33 @@
                     <button class="btn btn-primary form-btn" type="submit">Pay</button>
                 </div>
             </form>
-        </div>
     </div>
 
     <!--    TRANSACTIONS     -->
-    <h3>My Transactions</h3>
+    <h3 class="trans-h3">My Transactions</h3>
+
     <!--    FILTER FORM    -->
-    <form th:action="@{/transactions}" class="row g-1">
-        <div class="col-auto">
-            <label for="keyword" class="col-form-label">Search:</label>
-        </div>
-        <div class="col-md-6">
-            <input class="form-control" id="keyword" type="search" name="keyword" th:value="${keyword}" placeholder="Enter keyword">
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Search</button>
-            <a class="btn btn-danger" th:href="@{/transactions}">Clear</a>
-        </div>
-    </form>
-    <div th:if="${transactions.size() > 0}">
+    <div th:replace="~{/fragments/table-filter}"></div>
+
+    <!-- TABLE & PAGINATOR -->
+    <div class="trans-table-container" th:if="${!#lists.isEmpty(transactions)}">
         <!--    TABLE    -->
-        <table class="table">
+        <table class="table table-striped">
             <thead>
-            <tr>
-                <th scope="col">Connections</th>
-                <th scope="col">Description</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Date</th>
-            </tr>
+                <tr class="thead">
+                    <th scope="col" class="limit-width">Connections</th>
+                    <th scope="col">Description</th>
+                    <th scope="col" class="limit-width">Amount</th>
+                    <th scope="col">Date</th>
+                </tr>
             </thead>
-            <tbody class="table-striped">
-                <tr th:each="transaction : ${transactions}">
-                    <td th:text="${transaction.id}"></td>
+            <tbody>
+                <tr class="tr-content" th:each="transaction : ${transactions}">
+                    <td th:text="${transaction.senderEmail == user.email ? transaction.receiverEmail : transaction.senderEmail}"></td>
                     <td th:text="${transaction.description}"></td>
-                    <td th:text="${transaction.amount}"></td>
+                    <td class="td-amount" th:classappend="${transaction.senderEmail != user.email}? 'credit'"
+                        th:text="${transaction.senderEmail == user.email ? '- ' + #numbers.formatDecimal(transaction.amount, 0, 2)
+                        : '&nbsp&nbsp' + #numbers.formatDecimal(transaction.amount, 0, 2)}+'€'"></td>
                     <td th:text="${{transaction.date}}"></td>
                 </tr>
             </tbody>
@@ -124,13 +116,17 @@
             </div>
         </nav>
     </div>
-    <div th:if="${transactions.size() == 0 && keyword == null}">
-        <p>You haven't made any transfer yet</p>
+    <!-- EMPTY MESSAGES -->
+    <div>
+        <div th:if="${#lists.isEmpty(transactions) && keyword == null}">
+            <p>You haven't made any transfer yet</p>
+        </div>
+        <div th:if="${#lists.isEmpty(transactions) && keyword != null}">
+            <p>Oupsy try again! There is no transaction with a description matching your search...</p>
+        </div>
     </div>
-    <div th:if="${transactions.size() == 0 && keyword != null}">
-        <p>Oupsy try again! There is no transaction with a description matching your search...</p>
-    </div>
-</div>
+
+</section>
 
 </body>
 </html>

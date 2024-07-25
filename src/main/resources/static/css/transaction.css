@@ -1,0 +1,58 @@
+@import "styles.css";
+
+.trans-form-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+form#transaction {
+    width: 100%;
+    height: fit-content;
+    padding: 2rem;
+    margin-top: 0.5rem !important;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+}
+.form-select {
+    height: 2.3rem;
+    width: 90%;
+}
+.col-amount {
+    display: flex;
+    justify-content: end;
+}
+.form-amount {
+    width: 90%;
+}
+.form-description {
+    width: 95%;
+}
+.form-btn {
+    width: 100%;
+}
+
+.trans-table-container, .trans-h3 {
+    margin-top: 2rem;
+}
+.thead {
+    background-color: var(--color-primary) !important;
+}
+tr.thead th {
+    height: 4rem;
+    padding-bottom: 1.5rem;
+    background-color: inherit;
+    color: #ffffff;
+}
+thead, tbody {
+    text-align: center;
+}
+.limit-width {
+    width: 10rem;
+}
+.debit {
+    color: var(--color-debit) !important;
+}
+.credit {
+    font-weight: 400;
+    color: var(--color-primary) !important;
+}

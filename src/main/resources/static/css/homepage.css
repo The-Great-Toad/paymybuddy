@@ -1,0 +1,44 @@
+@import "styles.css";
+
+.hero-section {
+    background-color: var(--color-bg);
+    padding: 2rem;
+    text-align: center;
+    border: 1px solid var(--color-border);
+    margin-bottom: 2rem;
+}
+
+.hero-section h1 {
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.quick-actions .btn {
+    margin: 0.5rem;
+}
+
+.section-title {
+    /*color: var(--color-secondary);*/
+    margin-bottom: 1rem;
+}
+
+.transactions-section, .contacts-section {
+    background-color: var(--color-bg);
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    margin-bottom: 2rem;
+}
+
+.transaction, .contact {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.transaction:last-child, .contact:last-child {
+    border-bottom: none;
+}

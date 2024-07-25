@@ -1,0 +1,90 @@
+.outer-wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    background-color: #f0f2f5;
+}
+.inner-wrapper {
+    max-width: fit-content;
+    margin: auto;
+}
+.card {
+    height: fit-content;
+    padding: 1rem 1rem 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 1px 3px 9px 0 #717171;
+}
+
+.item.header {
+    margin-bottom: 2rem;
+}
+.item.footer {
+    margin-top: 1rem;
+}
+
+.btn.footer {
+    width: 140px;
+}
+.my-btn {
+    color: #fff;
+    background-color: #3be722;
+}
+
+.input-wrapper {
+    margin-bottom: 1rem;
+}
+input {
+    width: 350px !important;
+}
+
+hr {
+
+}
+/* ICONS */
+.input-wrapper {
+    position: relative;
+}
+i.icon {
+    position: absolute;
+    top: 53%;
+    transform: translateY(-50%);
+    left: 2%;
+}
+i.icon.email {
+    color: #b1acac;
+}
+
+/* Password Eye Icon */
+.pwd-field {
+    position: relative;
+}
+.pwd-field i {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    cursor: pointer;
+}
+.pwd-field i:nth-child(3) {
+    right: 2.2rem;
+    top: 31%;
+}
+
+/* Register Link */
+.login {
+    display: flex;
+}
+p {
+    margin: 1rem auto;
+}
+a.login-link {
+    text-decoration: none;
+    font-weight: 800;
+    color: #3be722;
+}
+a.login-link:hover {
+    font-size: large;
+}

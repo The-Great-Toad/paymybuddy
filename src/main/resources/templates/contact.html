@@ -1,12 +1,58 @@
 <!doctype html>
-<html th:replace="~{baseLayout :: layout(~{::title}, ~{::div.container})}">
+<html th:replace="~{baseLayout ::layout (~{::title}, ~{::link}, ~{::script},  ~{::div.container}, ${breadcrumb})}">
 <head>
     <title>Contact</title>
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/contact.css}">
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/table-filter.css}">
+    <!-- JS -->
+    <script th:src="@{/js/table-filter.js}" defer></script>
 </head>
 <body>
 
 <div class="container">
-    <h1>Contact page</h1>
+
+    <h3>Add New Connection</h3>
+    <!-- FORM CONTACT REQUEST -->
+    <form action="#" method="post" class="row g-1 mt-2" id="contact"
+          th:action="@{/contacts}" th:object="${contactRequest}">
+        <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Enter email..." aria-label="contact email"
+                   th:field="*{email}" th:classappend="${#fields.hasErrors('email') || contactUnknown}? 'is-invalid'">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
+            <div class="invalid-feedback" th:if="${contactUnknown}">Contact not found...</div>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary form-btn btn-wide">Add</button>
+        </div>
+    </form>
+
+    <!-- CONTACT LIST -->
+    <h3 class="mt-2">Contacts</h3>
+
+    <!-- FILTER -->
+    <div th:replace="~{/fragments/table-filter}"></div>
+
+    <!-- TABLE -->
+    <table class="table table-striped mt-2">
+        <thead>
+            <tr class="thead">
+                <th class="th-email" scope="col">Email</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr class="tr-content" th:each="contact : ${contacts}">
+            <td th:text="${contact}">email</td>
+            <td>
+                <a th:href="@{/contacts/remove(email=${contact})}" class="btn btn-secondary"
+                   title="remove contact" aria-label="remove contact">
+                    <i class="fa-solid fa-user-xmark"></i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 </body>

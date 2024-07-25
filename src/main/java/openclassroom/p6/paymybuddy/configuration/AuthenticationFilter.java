@@ -22,8 +22,8 @@ public class AuthenticationFilter implements Filter {
     {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
 
-        logger.info("{} - request user principal: {}", LOG_ID, request.getUserPrincipal());
-        logger.info("{} - request: {} {} {}", LOG_ID, request.getMethod(), request.getRequestURI(), request.getContentLength());
+//        logger.info("{} - request user principal: {}", LOG_ID, request.getUserPrincipal());
+//        logger.info("{} - request: {} {} {}", LOG_ID, request.getMethod(), request.getRequestURI(), request.getContentLength());
 
         filterChain.doFilter(servletRequest, servletResponse);
     }
