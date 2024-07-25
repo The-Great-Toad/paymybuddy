@@ -29,6 +29,9 @@ class TransactionServiceTest extends ServiceUtils {
     @Mock
     private TransactionRepository transactionRepository;
 
+    @Mock
+    private UserService userService;
+
     @Test
     void getTransactionsTest_keywordNull() {
         String keyword = null;

@@ -42,9 +42,9 @@ class TransactionControllerTest extends ControllerUtils {
     @Test
     void saveTransactionTest_success() throws Exception {
         MultiValueMap<String, String> params = new HttpHeaders();
-        params.add("receiver", "receiver@test.com");
+        params.add("receiver", "luc@mail.com");
         params.add("description", "free money");
-        params.add("amount", "2000");
+        params.add("amount", "200");
 
         mockMvc.perform(post("/transactions")
                         .with(user(user))
