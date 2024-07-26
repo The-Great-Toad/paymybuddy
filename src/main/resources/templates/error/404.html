@@ -1,0 +1,16 @@
+<!doctype html>
+<html th:replace="~{baseLayout ::layout (~{::title}, ~{::link}, _,  ~{::section}, _)}">
+<head>
+    <title>Error 404</title>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/404.css}">
+</head>
+<body>
+
+<section class="error-404">
+    <img th:src="@{/images/404.avif}" alt="logo error 404">
+    <div class="error-info"><span>Oops.</span> Looks like you took a wrong turn.</div>
+    <a th:href="@{/}" class="btn btn-secondary back-home">Go Back</a>
+</section>
+
+</body>
+</html>

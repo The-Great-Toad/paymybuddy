@@ -1,0 +1,17 @@
+<!doctype html>
+<html th:replace="~{baseLayout ::layout (~{::title}, ~{::link}, _,  ~{::section}, _)}">
+<head>
+    <title>Error 500</title>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/500.css}">
+</head>
+<body>
+
+<section class="error-500">
+    <img th:src="@{/images/500.png}" alt="logo error 500">
+    <div class="error-info"><span>Oops.</span> Something went wrong.</div>
+    <div class="error-info">Try to refresh this page or <span class="contact">contact us</span> if the problem persists.</div>
+<!--    <a th:href="@{/}" class="btn btn-secondary back-home">Go Home</a>-->
+</section>
+
+</body>
+</html>

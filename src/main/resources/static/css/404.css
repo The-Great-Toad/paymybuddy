@@ -1,0 +1,26 @@
+section.error-404 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+    margin-top: -2rem;
+}
+
+div.error-info {
+    margin-top: -3rem;
+    font-size: 2rem;
+    font-weight: 400;
+}
+
+div.error-info span {
+    color: var(--color-secondary);
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+a.back-home {
+    margin-top: 2rem;
+    width: 10rem;
+    padding: 0.5rem;
+}

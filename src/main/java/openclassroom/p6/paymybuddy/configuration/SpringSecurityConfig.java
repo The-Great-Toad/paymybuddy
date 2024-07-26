@@ -26,6 +26,8 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers("/js/**").permitAll()
+                        .requestMatchers("/libraries/**").permitAll()
+                        .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/register/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(login -> login
@@ -37,8 +39,6 @@ public class SpringSecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-//        return username -> userService.getUser(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return userService::getUser;
     }
 

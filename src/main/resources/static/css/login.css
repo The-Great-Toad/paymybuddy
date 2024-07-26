@@ -25,9 +25,10 @@
 .btn {
     width: 140px;
 }
-.my-btn {
+.my-btn, .my-btn:hover {
     color: #fff;
     background-color: #3be722;
+    cursor: default;
 }
 
 input.form-control {
