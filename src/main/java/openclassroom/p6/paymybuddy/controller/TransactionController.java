@@ -19,8 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/transactions")
@@ -72,7 +71,8 @@ public class TransactionController {
             BindingResult bindingResult,
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size)
+            @RequestParam(defaultValue = "10") int size,
+            RedirectAttributes redirectAttributes)
     {
         User user = (User) authentication.getPrincipal();
 //        User user = userService.getUser("test@test.com");
@@ -85,7 +85,7 @@ public class TransactionController {
 
             logger.info("{} - transaction request: {}", LOG_ID, transactionRequest);
 
-            bindingResult = transactionService.verifyTransactionRequest(
+            transactionService.verifyTransactionRequest(
                     user.getBalance(),
                     transactionRequest,
                     bindingResult
@@ -100,20 +100,15 @@ public class TransactionController {
                 return "transaction";
             }
 
-            Transaction transaction = transactionService.saveTransactionRequest(user, transactionRequest);
-            if (Objects.nonNull(transaction.getId())) {
-                pageTransactions = transactionService.getTransactions(keyword, paging, user.getEmail());
-                model.addAttribute("transactions", pageTransactions.getContent());
-                model.addAttribute("totalItems", pageTransactions.getTotalElements());
-                model.addAttribute("totalPages", pageTransactions.getTotalPages());
-                model.addAttribute("success", Messages.TRANSFER_SUCCESS);
-                model.addAttribute("transactionRequest", new TransactionRequest("","", ""));
-            }
+            transactionService.saveTransactionRequest(user, transactionRequest);
+
         }  catch (Exception e) {
+            logger.error("{} - {}", LOG_ID, e.getMessage());
             model.addAttribute("exceptionMessage", e.getMessage());
         }
 
-        return "transaction";
+        redirectAttributes.addFlashAttribute("success", Messages.TRANSFER_SUCCESS);
+        return "redirect:/transactions";
     }
 
     private void setModelAttributes(Model model, String keyword, int page, int size, User user) {

@@ -6,6 +6,7 @@ import openclassroom.p6.paymybuddy.domain.Transaction;
 import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.TransactionRequest;
 import openclassroom.p6.paymybuddy.repository.TransactionRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,6 @@ import org.springframework.validation.FieldError;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 @Service
@@ -122,7 +122,7 @@ public class TransactionService {
     }
 
     public BindingResult verifyTransactionRequest(Double userBalance, TransactionRequest transactionRequest, BindingResult bindingResult) {
-        if (Objects.nonNull(transactionRequest.amount())) {
+        if (StringUtils.isNotBlank(transactionRequest.amount())) {
             double amount = Math.floor(Double.parseDouble(transactionRequest.amount()) * 100) / 100;
             if (amount >= userBalance) {
                 bindingResult.addError(new FieldError(

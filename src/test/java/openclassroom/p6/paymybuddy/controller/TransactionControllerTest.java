@@ -49,12 +49,11 @@ class TransactionControllerTest extends ControllerUtils {
         mockMvc.perform(post("/transactions")
                         .with(user(user))
                         .queryParams(params))
-                .andExpect(status().isOk())
-                .andExpect(view().name("transaction"))
-                .andExpect(model().size(11))
-                .andExpect(model().attribute("user", user))
-                .andExpect(model().attribute("success", Messages.TRANSFER_SUCCESS))
-                .andExpect(content().string(containsString((String) Messages.TRANSFER_SUCCESS)));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/transactions"))
+                .andExpect(model().size(0))
+                .andExpect(flash().attribute("success", Messages.TRANSFER_SUCCESS))
+                .andExpect(view().name("redirect:/transactions"));
     }
 
     @Test
