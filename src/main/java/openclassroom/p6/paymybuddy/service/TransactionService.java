@@ -3,6 +3,7 @@ package openclassroom.p6.paymybuddy.service;
 import lombok.RequiredArgsConstructor;
 import openclassroom.p6.paymybuddy.constante.Messages;
 import openclassroom.p6.paymybuddy.domain.Transaction;
+import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.TransactionRequest;
 import openclassroom.p6.paymybuddy.repository.TransactionRepository;
 import org.slf4j.Logger;
@@ -82,13 +83,13 @@ public class TransactionService {
         }
     }
 
-    public Transaction saveTransactionRequest(String userEmail, TransactionRequest transactionRequest) {
+    public Transaction saveTransactionRequest(User user, TransactionRequest transactionRequest) {
         double amount = Math.floor(Double.parseDouble(transactionRequest.amount()) * 100) / 100;
         double fee = Math.floor((amount * Transaction.FEE_RATE) * 100) / 100;
 
         Transaction transaction = Stream.of(transactionRequest)
                 .map(t -> Transaction.builder()
-                        .senderEmail(userEmail)
+                        .senderEmail(user.getEmail())
                         .receiverEmail(t.receiver())
                         .description(t.description())
                         .amount(amount)
@@ -98,17 +99,16 @@ public class TransactionService {
                 .toList()
                 .get(0);
 
-        return saveTransaction(transaction);
-    }
-
-    public Transaction saveTransaction(Transaction transaction) {
         /* Deduct transaction amount from sender balance */
-        userService.withdraw(userService.getUser(transaction.getSenderEmail()), transaction.getAmount());
+        userService.withdraw(user, transaction.getAmount());
 
         /* Add transaction amount to receiver balance */
         userService.deposit(userService.getUser(transaction.getReceiverEmail()), transaction.getAmount());
 
-        /* Save transaction */
+        return saveTransaction(transaction);
+    }
+
+    public Transaction saveTransaction(Transaction transaction) {
         logger.debug("{} - Saving transaction {}", LOG_ID, transaction);
         Transaction savedTransaction;
         try {

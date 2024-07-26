@@ -1,6 +1,7 @@
 package openclassroom.p6.paymybuddy.service;
 
 import openclassroom.p6.paymybuddy.domain.Transaction;
+import openclassroom.p6.paymybuddy.domain.User;
 import openclassroom.p6.paymybuddy.domain.record.TransactionRequest;
 import openclassroom.p6.paymybuddy.repository.TransactionRepository;
 import org.junit.jupiter.api.Test;
@@ -107,7 +108,10 @@ class TransactionServiceTest extends ServiceUtils {
 
     @Test
     void saveTransactionRequestTest() {
-        String email = "sender@mail.com";
+        User sender = User.builder()
+                .email("sender@mail.com")
+                .balance(5000)
+                .build();
         TransactionRequest transactionRequest = new TransactionRequest(
                 "receiver@mail.com", "description", "25"
         );
@@ -115,7 +119,7 @@ class TransactionServiceTest extends ServiceUtils {
 
         when(transactionRepository.save(any())).thenReturn(expectedResult);
 
-        Transaction result = transactionService.saveTransactionRequest(email, transactionRequest);
+        Transaction result = transactionService.saveTransactionRequest(sender, transactionRequest);
 
         assertNotNull(result);
         assertEquals(expectedResult, result);

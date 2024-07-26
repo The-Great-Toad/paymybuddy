@@ -163,10 +163,8 @@ public class UserService {
         user.setBalance(balance - withdrawal);
         logger.debug("{} - Account balance after withdraw: ${}", LOG_ID, user.getBalance());
 
-        User modifiedUser = save(user);
-        if (modifiedUser == null) {
-            logger.error("{} - Failed withdrawal", LOG_ID);
-        }
+        save(user);
+
         logger.info("{} - {}€ withdraw from user account", LOG_ID, withdrawal);
     }
 

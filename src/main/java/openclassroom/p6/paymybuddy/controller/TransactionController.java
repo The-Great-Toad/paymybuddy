@@ -100,7 +100,7 @@ public class TransactionController {
                 return "transaction";
             }
 
-            Transaction transaction = transactionService.saveTransactionRequest(user.getEmail(), transactionRequest);
+            Transaction transaction = transactionService.saveTransactionRequest(user, transactionRequest);
             if (Objects.nonNull(transaction.getId())) {
                 pageTransactions = transactionService.getTransactions(keyword, paging, user.getEmail());
                 model.addAttribute("transactions", pageTransactions.getContent());
